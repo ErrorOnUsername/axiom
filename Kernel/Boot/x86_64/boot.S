@@ -1,16 +1,12 @@
 #include "gdt.h"
 #include <Kernel/Boot/multiboot2.h>
 
-set MULTIBOOT2_MAGIC, 0xE85250D6
-set MULTIBOOT2_ARCH_i386, 0
-set MULTIBOOT2_HEADER_LENGTH, (multiboot_header_end - multiboot_header_start)
-
 multiboot_header_start:
 
-	.long  MULTIBOOT2_MAGIC
-	.long  MULTIBOOT2_ARCH_i386
-	.long  MULTIBOOT2_HEADER_LENGTH
-	.long  -(MULTIBOOT2_MAGIC + MULTIBOOT2_ARCH_i386 + MULTIBOOT2_HEADER_LENGTH)
+	.long  MULTIBOOT2_HEADER_MAGIC
+	.long  MULTIBOOT_ARCHITECTURE_I386
+	.long  (multiboot_header_end - multiboot_header_start)
+	.long  -(MULTIBOOT2_MAGIC + MULTIBOOT2_ARCH_i386 + (multiboot_header_end - multiboot_header_start))
 
 	/* START OF MULTIBOOT2 TAGS */
 
