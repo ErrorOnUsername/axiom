@@ -1,12 +1,14 @@
 #include "gdt.h"
-#include <Kernel/Boot/multiboot2.h>
+#include <Kernel/Boot/multiboot2_defs.h>
+
+.section .multiboot
 
 multiboot_header_start:
 
 	.long  MULTIBOOT2_HEADER_MAGIC
 	.long  MULTIBOOT_ARCHITECTURE_I386
 	.long  (multiboot_header_end - multiboot_header_start)
-	.long  -(MULTIBOOT2_MAGIC + MULTIBOOT2_ARCH_i386 + (multiboot_header_end - multiboot_header_start))
+	.long  -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header_start))
 
 	/* START OF MULTIBOOT2 TAGS */
 
@@ -33,8 +35,11 @@ multiboot_header_end:
 
 /* Common Symbols */
 /* syntax: .comm {name}, {size}, {alignment} */
-.section .bss
-.comm kernel_stack, 0x4000, 0x1000
+.global kernel_stack, kernel_stack_top
+kernel_stack:
+	.skip 0x4000
+kernel_stack_top:
+.align 0x1000
 
 /* Global Descriptor Table */
 .section .data
@@ -54,7 +59,7 @@ gdt_ptr:
 .global _start
 .type _start, @function
 _start:
-	movl $kernel_stack + 32768, %esp
+	movl $kernel_stack + 0x4000, %esp
 
 	lgdt gdt_ptr
 
@@ -71,7 +76,7 @@ _start64:
 	movw %ax, %es
 	movw %ax, %fs
 	movw %ax, %gs
-	movw %gs, %ss
+	movw %ax, %ss
 
 	call k_init
 	

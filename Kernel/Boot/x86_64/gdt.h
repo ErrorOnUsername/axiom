@@ -15,14 +15,14 @@
 #define GDT_ACCESS_DIRECTION_DOWN (1 << 2)
 #define GDT_ACCESS_READABLE_WRITABLE (1 << 1)
 
-#define DECLARE_GDT_ENTRY(base, limit, flags, access)
-(
-	(((((base)) >> 24) & 0xff) << 56) |
-	((((flags)) & 0xf) << 52) |
-	(((((limit)) >> 16) & 0xf) << 48) |
-	(((((access) | (1 << 4))) & 0xff) << 40) |
-	((((base)) & 0xfff) << 16) |
-	(((limit)) & 0xffff)
+#define DECLARE_GDT_ENTRY(base, limit, flags, access) \
+(                                                     \
+	(((((base)) >> 24) & 0xff) << 56) |               \
+	((((flags)) & 0xf) << 52) |                       \
+	(((((limit)) >> 16) & 0xf) << 48) |               \
+	(((((access) | (1 << 4))) & 0xff) << 40) |        \
+	((((base)) & 0xfff) << 16) |                      \
+	(((limit)) & 0xffff)                              \
 )
 
 #define GDT_FIRST_ENTRY 0
