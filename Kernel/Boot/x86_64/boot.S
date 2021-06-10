@@ -33,15 +33,13 @@ multiboot_header_end:
 
 .code32
 
-/* Common Symbols */
-/* syntax: .comm {name}, {size}, {alignment} */
 .global kernel_stack, kernel_stack_top
 kernel_stack:
 	.skip 0x4000
 kernel_stack_top:
 .align 0x1000
 
-/* Global Descriptor Table */
+// Global Descriptor Table
 .section .data
 .align 0x1000
 gdt_table:
@@ -54,6 +52,17 @@ gdt_table_end:
 gdt_ptr:
 	.short GDT_TABLE_SIZE - 1
 	.long gdt_table
+
+// ELF Entry Point
+//
+// This is where execution begins.
+//
+// All we're doing is setting up the initial stack and
+// loading the GDT. After that, we make the jump into
+// long mode.
+//
+// TODO: We need to check if the cpu actually supports
+// long mode before we make the jump.
 
 .section .text
 .global _start
@@ -68,9 +77,10 @@ _start:
 	cli
 	hlt
 
+.code64
 .type _start64, @function
 _start64:
-	//TODO: Get multiboot info ptr and magic value later!!
+	// Clearing the segment registers.
 	movw 0  , %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -78,9 +88,11 @@ _start64:
 	movw %ax, %gs
 	movw %ax, %ss
 
+	//TODO: Get multiboot info ptr and magic value later!!
+
+	// We're jumpin' into C++ land
 	call k_init
 	
-	/* Should Never Reach */
 	cli
 	hlt
 1:
