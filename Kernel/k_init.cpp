@@ -1,7 +1,7 @@
 #include <AXUtil/types.h>
 
 #define VGA_TXT_BFR_ADDR 0xB8000
-#define VGA_TXT_WHITE_ATTRIB 7
+#define VGA_TXT_LIGHT_GRAY_ATTRIB 7
 
 extern "C" void k_init();
 extern "C" void k_println(const char*);
@@ -15,17 +15,17 @@ extern "C" void k_init() {
 	// as well slap it in here. :)
 
 	k_println("Hello, World!");
-	for(;;) {
-		asm("hlt");
-	}
+	while(1);
 }
 
 extern "C" void k_println(const char* msg) {
 	// TODO: Actually implement a print function.
+	unsigned char* video = ((unsigned char*)VGA_TXT_BFR_ADDR);
 	char c = msg[0];
 	int idx = 0;
 	while(c != '\0') {
-		// TODO: Actually put a character in the VGA text buffer.
+		*(video++) = c;
+		*(video++) = VGA_TXT_LIGHT_GRAY_ATTRIB;
 		c = msg[++idx];
 	}
 	// NEWLINE
