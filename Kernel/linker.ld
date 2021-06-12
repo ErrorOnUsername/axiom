@@ -71,8 +71,8 @@ SECTIONS
 
 	.bss : AT( ( LOADADDR( .data ) + SIZEOF( .data ) + 0xfff ) & 0xfffffffffffff000 )
 	{
-		* ( .bss       )
 		* ( COMMON     )
+		* ( .bss       )
 	}
 
 	_kernel_virtual_end = .;

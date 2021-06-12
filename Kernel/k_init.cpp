@@ -13,7 +13,6 @@ extern "C" void k_init() {
 	// us and make sure that it matches what it's supposed to. It's
 	// not suuuuuper important, but it's in the spec, so we might
 	// as well slap it in here. :)
-
 	k_println("Hello, World!");
 	while(1);
 }

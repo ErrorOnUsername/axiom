@@ -170,10 +170,11 @@ pdt_loop:
 	hlt
 
 .code64
+
+.global _start64
 .type _start64, @function
 _start64:
-	// Clearing the segment registers.
-	movw 0  , %ax
+	movw $0, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	movw %ax, %fs
@@ -184,7 +185,7 @@ _start64:
 
 	// Time for a HIGH LEVEL LANGUAGE... C++
 	call k_init
-	
+
 	cli
 	hlt
 1:
