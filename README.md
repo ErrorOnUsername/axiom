@@ -1,2 +1,3 @@
-# Aeternum (forever)
-64-bit OS
+# Axiom
+
+A 64-bit OS that I'm making for fun :)
