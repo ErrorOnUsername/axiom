@@ -1,13 +1,12 @@
 #pragma once
 
-/* Convenient int types */
+// Convenient int types
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned uint32_t;
+typedef unsigned long uint64_t;
 
-using i8  = __INT8_TYPE__;
-using i16 = __INT16_TYPE__;
-using i32 = __INT32_TYPE__;
-using i64 = __INT64_TYPE__;
-
-using u8  = __UINT8_TYPE__;
-using u16 = __UINT16_TYPE__;
-using u32 = __UINT32_TYPE__;
-using u64 = __UINT64_TYPE__;
+typedef signed char int8_t;
+typedef signed short int16_t;
+typedef signed int32_t;
+typedef signed long int64_t;

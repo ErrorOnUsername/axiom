@@ -1,4 +1,6 @@
-#include <Kernel/Boot/multiboot2_defs.h>
+#define ASM_FILE
+
+#include <Kernel/Boot/multiboot2.h>
 
 #include "control_register.h"
 #include "gdt.h"
@@ -30,20 +32,22 @@ multiboot_header_start:
 	.long  (multiboot_header_end - multiboot_header_start)
 	.long  -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + (multiboot_header_end - multiboot_header_start))
 
-	// START OF MULTIBOOT2 TAGS
+	.align 8
 
-	/*
+/*
+	// START OF MULTIBOOT2 TAGS
 framebuffer_tag_start:
 	.short MULTIBOOT_HEADER_TAG_FRAMEBUFFER
 	.short MULTIBOOT_HEADER_TAG_OPTIONAL
-	.long  (framebuffer_tag_end - framebuffer_tag_start)
+	.long  framebuffer_tag_end - framebuffer_tag_start
 	.long  1024
 	.long  768
 	.long  32
 framebuffer_tag_end:
-	*/
+	.align 8
 
 	// END OF MULTIBOOT2 TAGS
+*/
 
 	.short MULTIBOOT_HEADER_TAG_END
 	.short 0
@@ -72,7 +76,8 @@ multiboot_header_end:
 .comm pdt_h, PDT_SIZE, 0x1000
 
 // Global Descriptor Table
-.section .data
+.data
+.align 0x1000
 gdt_table:
 	.quad GDT_FIRST_ENTRY
 	.quad GDT_KERNEL_ENTRY
@@ -119,7 +124,7 @@ _start:
 	// Initialize the high Page Directory Table
 	movl $pdt_h, %eax
 	or $( FLAG_PRESENT | FLAG_WRITABLE ), %eax
-	movl %eax, pdpt_h + (PDPT_ADDR_TO_IDX(KERNEL_PHYSICAL_START) * PDPT_ENTRY_SIZE)
+	movl %eax, pdpt_h + (PDPT_ADDR_TO_IDX(KERNEL_VIRTUAL_START) * PDPT_ENTRY_SIZE)
 
 	movl $0, %ecx
 
