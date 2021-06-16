@@ -1,5 +1,5 @@
-#include <stdint>
-#include <stddef>
+#include <stdint.h>
+#include <stddef.h>
 
 #include <AXUtil/types.h>
 
@@ -25,7 +25,11 @@ static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.framebuffer_bpp = 0
 };
 
-[[section(".stivale2hdr"), used]]
+#ifdef __APPLE__
+__attribute__((section("DATA,.stivale2hdr"), used))
+#else
+__attribute__((section(".stivale2hdr"), used))
+#endif
 static stivale2_header stivale2_header {
 	.entry_point = 0,
 	.stack = (uintptr_t)k_stack + sizeof(k_stack),
@@ -33,31 +37,30 @@ static stivale2_header stivale2_header {
 	.tags = (uintptr_t)&framebuffer_header_tag
 };
 
-stivale2_tag* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id) {
-	stivale2_tag* current_tag = stivale2_struct->tags;
+void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id) {
+	auto* current_tag = (stivale2_tag*)stivale2_struct->tags;
 	for(;;) {
 		if(current_tag == nullptr) {
 			return nullptr;
 		}
 
-		if(current_tag->id == id) {
+		if(current_tag->identifier == id) {
 			return current_tag;
 		}
 
-		current_tag = current_tag->next;
+		current_tag = (stivale2_tag*)current_tag->next;
 	}
 }
 
 void k_start(stivale2_struct* stivale2_struct) {
-	stivale2_struct_tag_terminal* terminal_tag;
-	terminal_tag = get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
+	auto* terminal_tag = (stivale2_struct_tag_terminal*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
 
 	if(terminal_tag == nullptr)
-		for(;;) {}
+		for(;;);
 
 	void* term_write_ptr = (void*)terminal_tag->term_write;
 
-	void (*term_write) (const char* str, size_t length) = term_write_ptr;
+	void (*term_write) (const char* str, size_t length) = (void (*) (const char*, size_t))term_write_ptr;
 
 	term_write("Hello, World", 12);
 
