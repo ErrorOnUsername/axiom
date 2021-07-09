@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <AXUtil/types.h>
+#include <axutil/types.h>
 
-#include <Kernel/Boot/x86_64/stivale2.h>
+#include <kernel/boot/x86_64/stivale2.h>
 
 static uint8_t k_stack[4096];
 
@@ -26,7 +26,7 @@ static stivale2_header_tag_framebuffer framebuffer_header_tag {
 };
 
 #ifdef __APPLE__
-__attribute__((section("DATA,.stivale2hdr"), used))
+__attribute__((section("__DATA, .stivale2hdr"), used))
 #else
 __attribute__((section(".stivale2hdr"), used))
 #endif

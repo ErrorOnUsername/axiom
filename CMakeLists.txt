@@ -4,16 +4,17 @@ project( axiom CXX )
 set( CMAKE_CXX_STANDARD 20 )
 
 # TODO: Make a toolchain!
-set( CMAKE_CXX_COMPILER gcc )
+set( CMAKE_CXX_COMPILER gcc-11 )
+set( CMAKE_CXX_LINKER gcc-11 )
 
 include_directories( . )
 
-add_subdirectory( Kernel )
+add_subdirectory( kernel )
 
 add_custom_target( img
 	COMMAND make -C ../limine
 	COMMAND mkdir -p iso_root
-	COMMAND cp -v Kernel/Kernel ../limine.cfg ../limine/limine.sys ../limine/limine-cd.bin
+	COMMAND cp -v kernel/kernel ../limine.cfg ../limine/limine.sys ../limine/limine-cd.bin
 	           ../limine/limine-eltorito-efi.bin iso_root
 	COMMAND xorriso -as mkisofs -b limine-cd.bin
 	                -no-emul-boot -boot-load-size 4 -boot-info-table
