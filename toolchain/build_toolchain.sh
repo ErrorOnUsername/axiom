@@ -96,9 +96,8 @@ popd
 #==========================================================
 # Patch gcc and binutills
 #==========================================================
-pushd $SOURCES_DIR
 echo "PATCHING GCC..."
-pushd gcc-$GCC_VERSION
+pushd $SOURCES_DIR/gcc-$GCC_VERSION
 git init . > /dev/null
 git commit -am "init" > /dev/null
 git apply $GCC_PATCHFILE > /dev/null
@@ -106,7 +105,7 @@ popd
 echo "DONE."
 
 echo "PATCHING BINUTILS..."
-pushd binutils-$BINUTILS_VERSION
+pushd $SOURCES_DIR/binutils-$BINUTILS_VERSION
 git init . > dev/null
 git commit -am "init" > /dev/null
 git apply $BINUTILS_PATCHFILE > /dev/null
