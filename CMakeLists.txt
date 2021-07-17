@@ -4,8 +4,9 @@ project( axiom CXX )
 set( CMAKE_CXX_STANDARD 20 )
 
 # TODO: Make a toolchain!
+set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 set( CMAKE_CXX_COMPILER gcc-11 )
-set( CMAKE_CXX_LINKER gcc-11 )
+set( CMAKE_LINKER ld )
 
 include_directories( . )
 

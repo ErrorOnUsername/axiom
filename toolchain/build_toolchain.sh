@@ -13,13 +13,14 @@ GCC_VERSION="11.1.0"
 GCC_MD5SUM="333068a65c119e74c9d7bfcc75a8eeba"
 GCC_PKG_NAME="gcc-$GCC_VERSION"
 GCC_FILENAME="$GCC_PKG_NAME.tar.gz"
-GCC_PATCHFILE="$PATCHES_DIR/gcc.patch"
+GCC_PATCHFILE="$PATCHES_DIR/gcc.diff"
 GCC_BASE_URL="https://ftp.gnu.org/gnu/gcc/"
 
 BINUTILS_VERSION="2.36.1"
 BINUTILS_MD5SUM="3df9c3bbd944f9b57c1496f06741197b"
-BINUTILS_FILENAME="binutils-$BINUTILS_VERSION.tar.gz"
-BINUTILS_PATCHFILE="$PATCHES_DIR/binutils.patch"
+BINUTILS_PKG_NAME="binutils-$BINUTILS_VERSION"
+BINUTILS_FILENAME="$BINUTILS_PKG_NAME.tar.gz"
+BINUTILS_PATCHFILE="$PATCHES_DIR/binutils.diff"
 BINUTILS_BASE_URL="https://ftp.gnu.org/gnu/binutils/"
 
 exit_build() {
@@ -97,19 +98,19 @@ popd
 # Patch gcc and binutills
 #==========================================================
 echo "PATCHING GCC..."
-pushd $SOURCES_DIR/gcc-$GCC_VERSION
-git init . > /dev/null
-git commit -am "init" > /dev/null
-git apply $GCC_PATCHFILE > /dev/null
-popd
+#pushd $SOURCES_DIR/gcc-$GCC_VERSION
+#git init . > /dev/null
+#git commit -am "init" > /dev/null
+#git apply $GCC_PATCHFILE > /dev/null
+#popd
 echo "DONE."
 
 echo "PATCHING BINUTILS..."
-pushd $SOURCES_DIR/binutils-$BINUTILS_VERSION
-git init . > dev/null
-git commit -am "init" > /dev/null
-git apply $BINUTILS_PATCHFILE > /dev/null
-popd
+#pushd $SOURCES_DIR/binutils-$BINUTILS_VERSION
+#git init . > /dev/null
+#git commit -am "init" > /dev/null
+#git apply $BINUTILS_PATCHFILE > /dev/null
+#popd
 echo "DONE."
 popd
 
