@@ -37,14 +37,18 @@ static stivale2_header stivale2_header {
 	.tags = (uintptr_t)&framebuffer_header_tag
 };
 
-void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id) {
+void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
+{
 	auto* current_tag = (stivale2_tag*)stivale2_struct->tags;
-	for(;;) {
-		if(current_tag == nullptr) {
+	for(;;)
+	{
+		if(current_tag == nullptr)
+		{
 			return nullptr;
 		}
 
-		if(current_tag->identifier == id) {
+		if(current_tag->identifier == id)
+		{
 			return current_tag;
 		}
 
@@ -52,11 +56,12 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id) {
 	}
 }
 
-void k_start(stivale2_struct* stivale2_struct) {
+void k_start(stivale2_struct* stivale2_struct)
+{
 	auto* terminal_tag = (stivale2_struct_tag_terminal*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
 
 	if(terminal_tag == nullptr)
-		for(;;);
+		for(;;) { }
 
 	void* term_write_ptr = (void*)terminal_tag->term_write;
 
@@ -64,5 +69,5 @@ void k_start(stivale2_struct* stivale2_struct) {
 
 	term_write("Hello, World", 12);
 
-	for(;;) {}
+	for(;;) { }
 }
