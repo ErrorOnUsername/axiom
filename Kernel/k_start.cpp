@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <axutil/types.h>
+#include <AXUtil/types.h>
 
-#include <kernel/boot/x86_64/stivale2.h>
+#include <Kernel/Boot/x86_64/stivale2.h>
 
 static uint8_t k_stack[4096];
 
@@ -25,11 +25,7 @@ static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.framebuffer_bpp = 0
 };
 
-#ifdef __APPLE__
-__attribute__((section("__DATA, .stivale2hdr"), used))
-#else
 __attribute__((section(".stivale2hdr"), used))
-#endif
 static stivale2_header stivale2_header {
 	.entry_point = 0,
 	.stack = (uintptr_t)k_stack + sizeof(k_stack),
@@ -56,7 +52,7 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
 	}
 }
 
-void k_start(stivale2_struct* stivale2_struct)
+extern "C" void k_start(stivale2_struct* stivale2_struct)
 {
 	auto* terminal_tag = (stivale2_struct_tag_terminal*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
 
@@ -67,7 +63,7 @@ void k_start(stivale2_struct* stivale2_struct)
 
 	void (*term_write) (const char* str, size_t length) = (void (*) (const char*, size_t))term_write_ptr;
 
-	term_write("Hello, World", 12);
+	term_write("Welcome to Axiom! :)", 20);
 
 	for(;;) { }
 }
