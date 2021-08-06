@@ -1,5 +1,4 @@
 set( KERNEL_SOURCES
-	bootloader.cc
 	k_start.cc
 )
 
