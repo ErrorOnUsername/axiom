@@ -1,5 +1,6 @@
 set( KERNEL_SOURCES
-	k_start.cpp
+	bootloader.cc
+	k_start.cc
 )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I -O2" )
