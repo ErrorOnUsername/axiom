@@ -1,13 +1,13 @@
 #!/bin/zsh
 
 DIR="$(pwd)"
-BIN_DIR="$DIR/bin"
-PATCHES_DIR="$DIR/patches"
-SOURCES_DIR="$DIR/sources"
+BIN_DIR="$DIR/Bin"
+PATCHES_DIR="$DIR/Patches"
+SOURCES_DIR="$DIR/Pources"
 
 ARCH="x86_64"
 TARGET="$ARCH-elf"
-PREFIX="$DIR/$ARCH/bin"
+PREFIX="$DIR/$ARCH/Bin"
 
 GCC_VERSION="11.1.0"
 GCC_MD5SUM="333068a65c119e74c9d7bfcc75a8eeba"
@@ -29,9 +29,9 @@ exit_build() {
 	exit 1
 }
 
-mkdir -p "$DIR/tarballs"
+mkdir -p "$DIR/Tarballs"
 
-pushd "$DIR/tarballs"
+pushd "$DIR/Tarballs"
 #==========================================================
 # Getting the tarballs from the gnu ftp servers
 #==========================================================
@@ -49,7 +49,7 @@ echo "VERIFYING GCC INTEGRITY..."
 md5="$(md5sum $GCC_FILENAME | cut -f1 -d' ')"
 if [[ md5 == $GCC_MD5SUM ]]; then
 	echo "EXPECTED: $md5"
-	echo "GOT: $GCC_MD5SUM"
+	echo "GOT:      $GCC_MD5SUM"
 	exit_build "FILE INTEGRITY OF GCC IS COMPRIMIZED!"
 fi
 echo "DONE."
@@ -66,7 +66,7 @@ echo "VERIFYING BINUTILS INTEGRITY..."
 md5="$(md5sum $BINUTILS_FILENAME | cut -f1 -d' ')"
 if [[ md5 == $BINUTILS_MD5SUM ]]; then
 	echo "EXPECTED: $md5"
-	echo "GOT: $GCC_MD5SUM"
+	echo "GOT:      $GCC_MD5SUM"
 	exit_build "FILE INTEGRITY OF BINUTILS IS COMPRIMIZED!"
 fi
 echo "DONE."
@@ -112,7 +112,7 @@ echo "PATCHING BINUTILS..."
 #git apply $BINUTILS_PATCHFILE > /dev/null
 #popd
 echo "DONE."
-popd
+#popd
 
 #==========================================================
 # Build gcc and binutils
