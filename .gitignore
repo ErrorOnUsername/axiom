@@ -1,5 +1,6 @@
 /.cache/
 /Build/
-/toolchain/bin/
-/toolchain/sources/
-/toolchain/tarballs/
+/Toolchain/Build/
+/Toolchain/Local/
+/Toolchain/Sources/
+/Toolchain/Tarballs/

@@ -1,32 +1,43 @@
 #!/bin/zsh
 
 DIR="$(pwd)"
-BIN_DIR="$DIR/Bin"
 PATCHES_DIR="$DIR/Patches"
-SOURCES_DIR="$DIR/Pources"
+SOURCES_DIR="$DIR/Sources"
 
 ARCH="x86_64"
-TARGET="$ARCH-elf"
-PREFIX="$DIR/$ARCH/Bin"
+TARGET="$ARCH-pc-elf"
+PREFIX="$DIR/Local"
+BUILD_DIR="$DIR/../Build"
+SYS_ROOT="$DIR/../Build/Root"
 
-GCC_VERSION="11.1.0"
-GCC_MD5SUM="333068a65c119e74c9d7bfcc75a8eeba"
+GCC_VERSION="11.2.0"
+GCC_MD5SUM="b6e5e702022071bbfaea9440758e4e7e"
 GCC_PKG_NAME="gcc-$GCC_VERSION"
 GCC_FILENAME="$GCC_PKG_NAME.tar.gz"
-GCC_PATCHFILE="$PATCHES_DIR/gcc.diff"
 GCC_BASE_URL="https://ftp.gnu.org/gnu/gcc/"
 
-BINUTILS_VERSION="2.36.1"
-BINUTILS_MD5SUM="3df9c3bbd944f9b57c1496f06741197b"
+BINUTILS_VERSION="2.37"
+BINUTILS_MD5SUM="e875d4c4c64117fefc51f9bf28dcc4ed"
 BINUTILS_PKG_NAME="binutils-$BINUTILS_VERSION"
 BINUTILS_FILENAME="$BINUTILS_PKG_NAME.tar.gz"
-BINUTILS_PATCHFILE="$PATCHES_DIR/binutils.diff"
 BINUTILS_BASE_URL="https://ftp.gnu.org/gnu/binutils/"
 
 exit_build() {
 	echo "$1"
 	echo "EXITING..."
 	exit 1
+}
+
+step_begin() {
+	echo "\x1b[1;33m$1\x1b[0m"
+}
+
+step_end() {
+	echo "\x1b[1;32m$1\x1b[0m"
+}
+
+step_err() {
+	echo "\x1b[1;31m$1\x1b[0m"
 }
 
 mkdir -p "$DIR/Tarballs"
@@ -37,88 +48,119 @@ pushd "$DIR/Tarballs"
 #==========================================================
 md5=""
 
-echo "FETCHING GCC TARBALL..."
+#==== GCC ====
+step_begin "FETCHING GCC TARBALL..."
 if [[ -e $GCC_FILENAME ]]; then
-	echo "GCC TARBALL ALREADY EXISTS. SKIPPING THIS STEP..."
+	step_end "GCC TARBALL ALREADY EXISTS. SKIPPING THIS STEP..."
 else
 	curl -sLO "$GCC_BASE_URL/$GCC_PKG_NAME/$GCC_FILENAME"
-	echo "DONE."
+	step_end "DONE."
 fi
 
-echo "VERIFYING GCC INTEGRITY..."
+step_begin "VERIFYING GCC INTEGRITY..."
 md5="$(md5sum $GCC_FILENAME | cut -f1 -d' ')"
 if [[ md5 == $GCC_MD5SUM ]]; then
-	echo "EXPECTED: $md5"
-	echo "GOT:      $GCC_MD5SUM"
+	step_err "EXPECTED: $md5"
+	step_err "GOT:      $GCC_MD5SUM"
 	exit_build "FILE INTEGRITY OF GCC IS COMPRIMIZED!"
 fi
-echo "DONE."
+step_end "DONE."
 
-echo "FETCHING BINUTILS TARBALL..."
+
+#==== BINUTILS ====
+step_begin "FETCHING BINUTILS TARBALL..."
 if [[ -e $BINUTILS_FILENAME ]]; then
-	echo "BINUTILS TARBALL ALREADY EXISTS. SKIPPING THIS STEP..."
+	step_end "BINUTILS TARBALL ALREADY EXISTS. SKIPPING THIS STEP..."
 else
 	curl -sLO "$BINUTILS_BASE_URL/$BINUTILS_FILENAME"
-	echo "DONE."
+	step_end "DONE."
 fi
 
-echo "VERIFYING BINUTILS INTEGRITY..."
+step_begin "VERIFYING BINUTILS INTEGRITY..."
 md5="$(md5sum $BINUTILS_FILENAME | cut -f1 -d' ')"
 if [[ md5 == $BINUTILS_MD5SUM ]]; then
-	echo "EXPECTED: $md5"
-	echo "GOT:      $GCC_MD5SUM"
+	step_err "EXPECTED: $md5"
+	step_err "GOT:      $GCC_MD5SUM"
 	exit_build "FILE INTEGRITY OF BINUTILS IS COMPRIMIZED!"
 fi
-echo "DONE."
+step_end "DONE."
+
+
+
 
 #==========================================================
 # Extract tarballs
 #==========================================================
 mkdir -p "$SOURCES_DIR"
 
-echo "EXTRACTING GCC..."
+#==== GCC ====
+step_begin "EXTRACTING GCC..."
 if [[ -e $SOURCES_DIR/$GCC_PKG_NAME ]]; then
-	echo "GCC IS ALREADY EXTRACTED. SKIPPING THIS STEP..."
+	step_end "GCC IS ALREADY EXTRACTED. SKIPPING THIS STEP..."
 else
 	tar xf "$GCC_FILENAME" --cd "$SOURCES_DIR"
-	echo "DONE."
+	step_end "DONE."
 fi
 
-echo "EXTRACTING BINUTILS..."
+
+#==== BINUTILS ====
+step_begin "EXTRACTING BINUTILS..."
 if [[ -e $SOURCES_DIR/$BINUTILS_PKG_NAME ]]; then
-	echo "BINUTILS IS ALREADY EXTRACTED. SKIPPING THIS STEP..."
+	step_end "BINUTILS IS ALREADY EXTRACTED. SKIPPING THIS STEP..."
 else
 	tar xf "$BINUTILS_FILENAME" --cd "$SOURCES_DIR"
-	echo "DONE."
+	step_end "DONE."
 fi
 
 popd
 
-#==========================================================
-# Patch gcc and binutills
-#==========================================================
-echo "PATCHING GCC..."
-#pushd $SOURCES_DIR/gcc-$GCC_VERSION
-#git init . > /dev/null
-#git commit -am "init" > /dev/null
-#git apply $GCC_PATCHFILE > /dev/null
-#popd
-echo "DONE."
 
-echo "PATCHING BINUTILS..."
-#pushd $SOURCES_DIR/binutils-$BINUTILS_VERSION
-#git init . > /dev/null
-#git commit -am "init" > /dev/null
-#git apply $BINUTILS_PATCHFILE > /dev/null
-#popd
-echo "DONE."
-#popd
+
 
 #==========================================================
 # Build gcc and binutils
 #==========================================================
-echo "BUILDING GCC..."
-echo "DONE."
 
-echo "BUILDING BINUTILS..."
-echo "DONE."
+# Who in their right mind would build this with debug symbols??
+export CFLAGS="-g0 -O2 -mtune=native"
+export CXXFLAGS="-g0 -O2 -mtune=native"
+
+rm -rf $PREFIX
+mkdir -p $PREFIX
+
+PARALLEL_JOBS=$(nproc)
+
+mkdir -p "$DIR/Build"
+pushd "$DIR/Build"
+	step_begin "BUILDING BINUTILS..."
+	rm -rf binutils
+	mkdir binutils
+	pushd binutils
+		$SOURCES_DIR/$BINUTILS_PKG_NAME/configure \
+			--prefix="$PREFIX"                    \
+			--target="$TARGET"                    \
+			--with-sysroot                        \
+			--disable-nls                         \
+			--disable-werror || exit 1
+		make -j $PARALLEL_JOBS || exit 1
+		make install
+	popd
+	step_end "DONE."
+
+	step_begin "BUILDING GCC..."
+	rm -rf gcc
+	mkdir gcc
+	pushd gcc
+		./../../Sources/$GCC_PKG_NAME/configure \
+			--prefix="$PREFIX"                  \
+			--target="$TARGET"                  \
+			--enable-languages=c,c++            \
+			--disable-nls                       \
+			--without-headers || exit 1
+		make all-gcc -j $PARALLEL_JOBS || exit 1
+		make all-target-libgcc -j $PARALLEL_JOBS || exit 1
+		make install-gcc -j $PARALLEL_JOBS || exit 1
+		make install-target-libgcc -j $PARALLEL_JOBS || exit 1
+	popd
+	step_end "DONE."
+popd

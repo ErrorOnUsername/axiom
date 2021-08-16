@@ -1,1 +1,1 @@
-rm -rf sources tarballs
+rm -rf Sources Tarballs Local Build

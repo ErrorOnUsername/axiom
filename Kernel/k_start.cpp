@@ -1,7 +1,5 @@
-#include <stdint.h>
-#include <stddef.h>
-
-#include <AXUtil/Types.hh>
+#include "Kernel/IO.h"
+#include <AXUtil/Types.h>
 #include <Kernel/Boot/x86_64/stivale2.h>
 
 static uint8_t k_stack[4096];
@@ -24,7 +22,7 @@ static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.framebuffer_bpp = 0
 };
 
-__attribute__((section(".stivale2hdr"), used))
+__attribute__((__section__(".stivale2hdr"), used))
 static stivale2_header stivale2_header {
 	.entry_point = 0,
 	.stack = (uintptr_t)k_stack + sizeof(k_stack),
@@ -51,6 +49,8 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
 	}
 }
 
+extern "C" void k_printf(const char* fmt, ...);
+
 extern "C" void k_start(stivale2_struct* stivale2_struct)
 {
 	auto* terminal_tag = (stivale2_struct_tag_terminal*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
@@ -58,12 +58,21 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 	if(terminal_tag == nullptr)
 		for(;;) { }
 
+	k_printf("Welcome to Axiom! :)\n");
 	void* term_write_ptr = (void*)terminal_tag->term_write;
 	void (*term_write) (const char* str, size_t length) = (void (*) (const char*, size_t))term_write_ptr;
-	auto* memmap = (stivale2_struct_tag_memmap*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-	// TODO: MAKE AN ACTUAL PRINT FUNCTION!
-	term_write("Welcome to Axiom! :)", 20);
+	auto* memmap_tag = (stivale2_struct_tag_memmap*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+	auto* memmap = memmap_tag->memmap;
+	uint64_t memmap_entries = memmap_tag->entries;
+
+	k_printf("The bootloader detected the following memory map:\n");
+	for(uint64_t i = 0; i < memmap_entries; i++)
+	{
+		auto const& current_entry = memmap[i];
+		/* Don't look at all the type conversions. I dont feel like writing more printf stuff */
+		k_printf("base: %xl, length: %xl, type: %x   \n", current_entry.base, current_entry.length, current_entry.type);
+	}
 
 	for(;;) { }
 }
