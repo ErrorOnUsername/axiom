@@ -2,6 +2,7 @@ set( KERNEL_SOURCES
 	Arch/x86_64/Boot/boot.cpp
 	Arch/x86_64/GDT/GDT.cpp
 	Arch/x86_64/GDT/load_gdt.S
+	Memory/MemoryManager.cpp
 	k_start.cpp
 	k_debug.cpp
 )

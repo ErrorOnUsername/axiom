@@ -4,6 +4,10 @@
 #include <Kernel/Arch/x86_64/Boot/boot.h>
 #include <Kernel/Arch/x86_64/Boot/stivale2.h>
 #include <Kernel/Arch/x86_64/GDT/GDT.h>
+#include <Kernel/Memory/MemoryManager.h>
+
+#define W 0x00ff00ff
+#define B 0x00000000
 
 namespace Kernel {
 
@@ -24,14 +28,70 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 
 	k_printf("Welcome to Axiom! :)\n");
 
-	auto* memmap = memmap_tag->memmap;
-	uint64_t memmap_entries = memmap_tag->entries;
+	MemoryManager::init(memmap_tag);
 
-	k_printf("The bootloader detected the following memory map:\n");
-	for(uint64_t i = 0; i < memmap_entries; i++) {
-		auto const& current_entry = memmap[i];
-		k_printf("base: %xl, length: %xl, type: %s\n", current_entry.base, current_entry.length, memmap_type_as_string(current_entry.type));
+	/* WE MUST DISPLAY E */
+	auto* framebuffer_address = (uint32_t*)framebuffer_tag->framebuffer_addr;
+
+	const uint16_t framebuffer_width = framebuffer_tag->framebuffer_width;
+	const uint16_t framebuffer_height = framebuffer_tag->framebuffer_height;
+
+	/* Literally just a bitmap for the letter E */
+	uint32_t E[] =
+	{
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+	};
+
+	constexpr uint16_t start_x = 100;
+	constexpr uint16_t end_x = 117;
+
+	constexpr uint16_t start_y = 100;
+	constexpr uint16_t end_y = 139;
+
+	for(uint16_t y = start_y; y < end_y; y++) { for(uint16_t x = start_x; x < end_x; x++) {
+			framebuffer_address[x + (y * framebuffer_width)] = E[(x-start_x) + ((y-start_y) * 18)];
+		}
 	}
+
 
 	for(;;);
 }

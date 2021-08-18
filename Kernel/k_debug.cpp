@@ -9,10 +9,10 @@ static void kpf_color_enable()
 {
 	IO::out8(IO::QEMU_SERIAL_PORT, 0x1b);
 	IO::out8(IO::QEMU_SERIAL_PORT, '[');
-	IO::out8(IO::QEMU_SERIAL_PORT, '1');
+	IO::out8(IO::QEMU_SERIAL_PORT, '3');
 	IO::out8(IO::QEMU_SERIAL_PORT, ';');
 	IO::out8(IO::QEMU_SERIAL_PORT, '3');
-	IO::out8(IO::QEMU_SERIAL_PORT, '2');
+	IO::out8(IO::QEMU_SERIAL_PORT, '5');
 	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
 }
 
