@@ -3,6 +3,8 @@
 #include <AXUtil/Types.h>
 #include <Kernel/IO.h>
 
+namespace Kernel {
+
 static void kpf_color_enable()
 {
 	IO::out8(IO::QEMU_SERIAL_PORT, 0x1b);
@@ -10,7 +12,7 @@ static void kpf_color_enable()
 	IO::out8(IO::QEMU_SERIAL_PORT, '1');
 	IO::out8(IO::QEMU_SERIAL_PORT, ';');
 	IO::out8(IO::QEMU_SERIAL_PORT, '3');
-	IO::out8(IO::QEMU_SERIAL_PORT, '4');
+	IO::out8(IO::QEMU_SERIAL_PORT, '2');
 	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
 }
 
@@ -22,8 +24,7 @@ static void kpf_color_disable()
 	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
 }
 
-extern "C"
-{
+extern "C" {
 
 static void dbg_putchar(char c)
 {
@@ -47,16 +48,12 @@ int k_printf(const char* fmt, ...)
 	char c = ':';
 	va_list args;
 	va_start(args, fmt);
-	while(c != '\0')
-	{
+	while(c != '\0') {
 		c = fmt[idx];
-		switch(c)
-		{
-			case '%':
-			{
+		switch(c) {
+			case '%': {
 				c = fmt[++idx];
-				switch(c)
-				{
+				switch(c) {
 					/* int type */
 					case 'd':
 					case 'i':
@@ -68,70 +65,58 @@ int k_printf(const char* fmt, ...)
 					case 'o':
 						/* octal notation */
 						break;
-					case 'x':
-					{
+					case 'x': {
 						/* hexadecimal (abcdef) */
-						if(fmt[idx + 1] == 'l')
-						{
+						if(fmt[idx + 1] == 'l') {
 							c = fmt[++idx];
 
 							uint64_t value = va_arg(args, uint64_t);
-							uint8_t place = 60;
+							int8_t place = 60;
 							dbg_putchar('0');
 							dbg_putchar('x');
 
-							while(place != 0)
-							{
-								uint8_t nibble = (value & (0xf << place)) >> place;
+							while(place >= 0) {
+								uint8_t nibble = ((value >> place) & 0xf);
 								dbg_putchar(lowercase_hex_values[nibble]);
 								place -= 4;
 							}
-						}
-						else
-						{
+						} else {
 							uint32_t value = va_arg(args, uint32_t);
-							uint8_t place = 28;
+							int8_t place = 28;
 							dbg_putchar('0');
 							dbg_putchar('x');
 
-							while(place != 0)
-							{
-								uint8_t nibble = (value & (0xf << place)) >> place;
+							while(place >= 0) {
+								uint8_t nibble = ((value >> place) & 0xf);
 								dbg_putchar(lowercase_hex_values[nibble]);
 								place -= 4;
 							}
 						}
 						break;
 					}
-					case 'X':
-					{
+					case 'X': {
 						/* hexadecimal (ABCDEF) */
-						if(fmt[idx + 1] == 'l')
-						{
+						if(fmt[idx + 1] == 'l') {
 							c = fmt[++idx];
 
 							uint64_t value = va_arg(args, uint64_t);
-							uint8_t place = 60;
+							int8_t place = 60;
 							dbg_putchar('0');
 							dbg_putchar('X');
 
-							while(place != 0)
-							{
-								uint8_t nibble = (value & (0xf << place)) >> place;
+							while(place >= 0) {
+								uint8_t nibble = ((value >> place) & 0xf);
 								dbg_putchar(uppercase_hex_values[nibble]);
 								place -= 4;
 							}
-						}
-						else
-						{
+						} else {
 							uint32_t value = va_arg(args, uint32_t);
-							uint8_t place = 28;
+							int8_t place = 28;
 							dbg_putchar('0');
 							dbg_putchar('X');
 
-							while(place != 0)
-							{
-								uint8_t nibble = (value & (0xf << place)) >> place;
+							while(place >= 0) {
+								uint8_t nibble = ((value >> place) & 0xf);
 								dbg_putchar(uppercase_hex_values[nibble]);
 								place -= 4;
 							}
@@ -181,22 +166,28 @@ int k_printf(const char* fmt, ...)
 					* no l modifier: const char* type
 					* l modifier: const wint_t* type
 					*/
-					case 's':
+					case 's': {
+						const char* argument = va_arg(args, const char*);
+						size_t index = 0;
+						char current = argument[index];
+						while(current != '\0') {
+							dbg_putchar(current);
+							current = argument[++index];
+						}
 						break;
+					}
 
 					/* void* type */
-					case 'p':
-					{
+					case 'p': {
 						void* argument = va_arg(args, void*);
 						/* FIXME: If we ever end up supporting non-64-bit architectures, this wont work */
 						uint64_t value = (uint64_t)argument;
-						uint8_t place = 60;
+						int8_t place = 60;
 						dbg_putchar('0');
 						dbg_putchar('x');
 
-						while(place != 0)
-						{
-							uint8_t nibble = (value & (0xf << place)) >> place;
+						while(place >= 0) {
+							uint8_t nibble = ((value >> place) & 0xf);
 							dbg_putchar(lowercase_hex_values[nibble]);
 							place -= 4;
 						}
@@ -208,12 +199,14 @@ int k_printf(const char* fmt, ...)
 			}
 			default:
 				dbg_putchar(c);
+				idx++;
 		}
-		idx++;
 	}
 	va_end(args);
 	kpf_color_disable();
 	return 0;
+}
+
 }
 
 }
