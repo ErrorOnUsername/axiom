@@ -2,12 +2,15 @@ set( KERNEL_SOURCES
 	Arch/x86_64/Boot/boot.cpp
 	Arch/x86_64/GDT/GDT.cpp
 	Arch/x86_64/GDT/load_gdt.S
+	Arch/x86_64/Interrupts/interrupts.cpp
+	Arch/x86_64/Interrupts/load_idt.S
+	Arch/x86_64/Interrupts/IDT.cpp
 	Memory/MemoryManager.cpp
 	k_start.cpp
 	k_debug.cpp
 )
 
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I -O2" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g0 -I -O2" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffreestanding -fno-stack-protector -fno-pic -no-pie" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-80387 -mno-mmx -mno-3dnow -mcmodel=kernel " )

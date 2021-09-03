@@ -12,7 +12,6 @@ public:
 
 	void setup_paging();
 
-
 private:
 	MemoryManager();
 	~MemoryManager();

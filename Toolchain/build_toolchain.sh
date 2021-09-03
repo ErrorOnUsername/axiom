@@ -59,9 +59,9 @@ fi
 
 step_begin "VERIFYING GCC INTEGRITY..."
 md5="$(md5sum $GCC_FILENAME | cut -f1 -d' ')"
-if [[ md5 == $GCC_MD5SUM ]]; then
-	step_err "EXPECTED: $md5"
-	step_err "GOT:      $GCC_MD5SUM"
+if [[ md5 != $GCC_MD5SUM ]]; then
+	step_err "EXPECTED: $GCC_MD5SUM"
+	step_err "GOT:      $md5"
 	exit_build "FILE INTEGRITY OF GCC IS COMPRIMIZED!"
 fi
 step_end "DONE."
@@ -78,9 +78,9 @@ fi
 
 step_begin "VERIFYING BINUTILS INTEGRITY..."
 md5="$(md5sum $BINUTILS_FILENAME | cut -f1 -d' ')"
-if [[ md5 == $BINUTILS_MD5SUM ]]; then
-	step_err "EXPECTED: $md5"
-	step_err "GOT:      $GCC_MD5SUM"
+if [[ md5 != $BINUTILS_MD5SUM ]]; then
+	step_err "EXPECTED: $BINUTILS_MD5SUM"
+	step_err "GOT:      $md5"
 	exit_build "FILE INTEGRITY OF BINUTILS IS COMPRIMIZED!"
 fi
 step_end "DONE."

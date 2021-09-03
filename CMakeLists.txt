@@ -14,7 +14,7 @@ add_custom_target( img
 	COMMAND make -C ../Vendor/limine
 	COMMAND mkdir -p iso_root
 	COMMAND cp -v Kernel/Kernel ../limine.cfg ../Vendor/limine/limine.sys ../Vendor/limine/limine-cd.bin
-	          ../Vendor/limine/limine-eltorito-efi.bin iso_root
+	              ../Vendor/limine/limine-eltorito-efi.bin iso_root
 	COMMAND xorriso -as mkisofs -b limine-cd.bin
 	            -no-emul-boot -boot-load-size 4 -boot-info-table
 	            --efi-boot limine-eltorito-efi.bin

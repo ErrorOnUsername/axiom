@@ -16,13 +16,13 @@ GDT custom_gdt = {
 	{0, 0, 0, 0xf2, 0xa0, 0}, /* DATA */
 };
 
-void init_custom_gdt()
+void init_gdt()
 {
-	GDTDescriptor descriptor;
+	DescriptorTablePointer descriptor;
 	descriptor.size = sizeof(custom_gdt) - 1;
 	descriptor.offset = (uint64_t)&custom_gdt;
-	k_printf("[gdt] size: %x offset: %xl\n", (uint32_t)descriptor.size, descriptor.offset);
 	load_gdt(&descriptor);
+	k_printf("[GDT] loaded with size: %x offset: %xl\n", (uint32_t)descriptor.size, descriptor.offset);
 }
 
 }

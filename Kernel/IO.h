@@ -39,17 +39,6 @@ inline uint32_t in32(int16_t port)
 	return ret;
 }
 
-inline uint64_t in64(int16_t port)
-{
-	uint64_t ret;
-	asm volatile(
-		"inq %1, %0"
-		: "=a"(ret)
-		: "Nd"(port)
-	);
-	return ret;
-}
-
 inline void out8(uint16_t port, uint8_t data)
 {
 	asm volatile("outb %0, %1" :: "a"(data),  "Nd"(port));
@@ -61,11 +50,6 @@ inline void out16(uint16_t port, uint8_t data)
 }
 
 inline void out32(uint16_t port, uint8_t data)
-{
-	asm volatile("outl %0, %1" :: "a"(data),  "Nd"(port));
-}
-
-inline void out64(uint16_t port, uint8_t data)
 {
 	asm volatile("outl %0, %1" :: "a"(data),  "Nd"(port));
 }

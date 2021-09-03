@@ -5,13 +5,6 @@
 load_gdt:
 	lgdt (%rdi)
 
-	movw $0x10, %ax
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
-	movw %ax, %ss
-
 	sub $16, %rsp
 	movq $0x08, 8(%rsp)
 	movabsq $exit, %rax
@@ -19,4 +12,10 @@ load_gdt:
 	lretq
 
 exit:
+	movw $0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	movw %ax, %ss
 	ret

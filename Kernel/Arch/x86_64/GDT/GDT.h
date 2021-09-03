@@ -1,13 +1,17 @@
 #pragma once
 
 #include <AXUtil/Types.h>
+#include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
 
 namespace Kernel {
 
-struct GDTDescriptor {
-	uint16_t size;
-	uint64_t offset;
-} __attribute__((packed));
+enum class GDTEntryOffset : uint16_t {
+	NullSegment          = 0x0000,
+	KernelCodeSegment    = 0x0008,
+	KernelDataSegment    = 0x0010,
+	UserspaceCodeSegment = 0x0018,
+	UserspaceDataSegment = 0x0020,
+};
 
 struct GDTEntry {
 	uint16_t limit_0;
@@ -16,7 +20,7 @@ struct GDTEntry {
 	uint8_t access_byte;
 	uint8_t limit_and_flags;
 	uint8_t base_2;
-} __attribute__((packed));
+} PACKED;
 
 struct GDT {
 	GDTEntry null_segment;
@@ -24,12 +28,12 @@ struct GDT {
 	GDTEntry kernel_data_segment;
 	GDTEntry userspace_code_segment;
 	GDTEntry userspace_data_segment;
-} __attribute__((packed))
-__attribute__((aligned(0x1000)));
+} PACKED
+ALIGN(0x1000);
 
 extern GDT custom_gdt;
-extern "C" void load_gdt(GDTDescriptor* descriptor);
+extern "C" void load_gdt(DescriptorTablePointer* descriptor);
 
-void init_custom_gdt();
+void init_gdt();
 
 }

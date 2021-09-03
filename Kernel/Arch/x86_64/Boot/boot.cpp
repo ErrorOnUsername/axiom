@@ -15,7 +15,7 @@ static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.framebuffer_bpp = 32,
 };
 
-__attribute__((__section__(".stivale2hdr"), used))
+SECTION(.stivale2hdr)
 static stivale2_header stivale2_header {
 	.entry_point = 0,
 	.stack = (uintptr_t)k_stack + sizeof(k_stack),
