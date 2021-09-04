@@ -3,7 +3,7 @@ set( KERNEL_SOURCES
 	Arch/x86_64/GDT/GDT.cpp
 	Arch/x86_64/GDT/load_gdt.S
 	Arch/x86_64/Interrupts/interrupts.cpp
-	Arch/x86_64/Interrupts/load_idt.S
+	Arch/x86_64/Interrupts/interrupts.S
 	Arch/x86_64/Interrupts/IDT.cpp
 	Memory/MemoryManager.cpp
 	k_start.cpp

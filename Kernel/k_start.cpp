@@ -28,10 +28,6 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 
 	k_printf("Welcome to Axiom! :)\n");
 
-
-	// FIXME: Something here is broken. I need to fix it, but I'll come back to this later.
-	asm volatile("int $0x0e"); // Software-triggered page fault
-
 	MemoryManager::init(memmap_tag);
 
 	auto* framebuffer_address = (uint32_t*)framebuffer_tag->framebuffer_addr;

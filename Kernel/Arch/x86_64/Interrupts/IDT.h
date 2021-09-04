@@ -20,10 +20,10 @@ struct IDTEntryDescriptor {
 	uint32_t reserved;
 } PACKED;
 
-extern "C" void load_idt(DescriptorTablePointer* idtr);
-
 void set_idt_entry(uint8_t interrupt_vector, uint8_t type_and_attributes, void (*handler)());
 void set_offset_of_idt_entry(IDTEntryDescriptor* descriptor, uint64_t offset);
+
+extern "C" void* isr_table[];
 
 void init_idt();
 
