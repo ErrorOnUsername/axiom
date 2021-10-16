@@ -1,20 +1,21 @@
 #pragma once
 
-#include <Kernel/Arch/x86_64/Boot/stivale2.h>
+#include <Kernel/Memory/BootloaderMemoryMap.h>
+#include <Kernel/Memory/PhysicalRange.h>
+#include <Kernel/KResult.h>
 
-namespace Kernel {
+namespace Kernel::Memory {
 
 class MemoryManager {
 public:
-	static void init(stivale2_struct_tag_memmap*);
-
-	MemoryManager& instance();
-
-	void setup_paging();
+	static KResult initialize(BootloaderMemoryMap&);
 
 private:
-	MemoryManager();
-	~MemoryManager();
+	MemoryManager() = delete;
+
+	static void parse_memory_map(BootloaderMemoryMap&);
+
+	static PhysicalRange m_reported_memory_ranges[11];
 };
 
 }

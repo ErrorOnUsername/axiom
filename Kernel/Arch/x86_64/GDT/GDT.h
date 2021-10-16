@@ -1,9 +1,10 @@
 #pragma once
 
+#include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
 #include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
 
-namespace Kernel {
+namespace Kernel::GDT {
 
 enum class GDTEntryOffset : uint16_t {
 	NullSegment          = 0x0000,

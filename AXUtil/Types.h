@@ -11,9 +11,3 @@ using int32_t = __INT32_TYPE__;
 using int64_t = __INT64_TYPE__;
 
 using size_t = __SIZE_TYPE__;
-
-#define NAKED __attribute__((naked))
-#define PACKED __attribute__((packed))
-#define USED __attribute__((used))
-#define ALIGN(x) __attribute__((aligned(x)))
-#define SECTION(x) __attribute__((__section__(#x), used))

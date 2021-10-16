@@ -1,3 +1,6 @@
+#include "boot.h"
+
+#include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
 #include <Kernel/Arch/x86_64/Boot/stivale2.h>
 
@@ -39,7 +42,7 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
 	}
 }
 
-const char* memmap_type_as_string(uint32_t type)
+const char* memory_map_type_as_string(uint32_t type)
 {
 	switch(type) {
 		case 1:
@@ -59,8 +62,17 @@ const char* memmap_type_as_string(uint32_t type)
 		case 0x1002:
 			return "FRAMEBUFFER";
 		default:
-			return "UNDEFINED";
+			return "UNKNOWN";
 	}
+}
+
+BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const& entry)
+{
+	return {
+		.address = entry.base,
+		.size = entry.length,
+		.type = entry.type
+	};
 }
 
 }

@@ -9,10 +9,10 @@ static void kpf_color_enable()
 {
 	IO::out8(IO::QEMU_SERIAL_PORT, 0x1b);
 	IO::out8(IO::QEMU_SERIAL_PORT, '[');
-	IO::out8(IO::QEMU_SERIAL_PORT, '3');
+	IO::out8(IO::QEMU_SERIAL_PORT, '1');
 	IO::out8(IO::QEMU_SERIAL_PORT, ';');
 	IO::out8(IO::QEMU_SERIAL_PORT, '3');
-	IO::out8(IO::QEMU_SERIAL_PORT, '5');
+	IO::out8(IO::QEMU_SERIAL_PORT, '1');
 	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
 }
 
@@ -55,7 +55,32 @@ int k_printf(const char* fmt, ...)
 				c = fmt[++idx];
 				switch(c) {
 					/* int type */
-					case 'd':
+					case 'd': {
+						int32_t value = va_arg(args, int32_t);
+
+						int32_t reverse_value = 0;
+						int32_t place = 0;
+						while(value != 0) {
+							if(value < 0) {
+								dbg_putchar('-');
+								value *= -1;
+								continue;
+							}
+							reverse_value += value % 10;
+							reverse_value *= 10;
+							value /= 10;
+							place++;
+						}
+
+						while(place != 0) {
+							uint32_t digit = reverse_value % 10;
+							dbg_putchar(lowercase_hex_values[digit]);
+							reverse_value /= 10;
+							place--;
+						}
+
+						break;
+					}
 					case 'i':
 						break;
 

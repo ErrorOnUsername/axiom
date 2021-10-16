@@ -16,9 +16,9 @@ add_custom_target( img
 	COMMAND cp -v Kernel/Kernel ../limine.cfg ../Vendor/limine/limine.sys ../Vendor/limine/limine-cd.bin
 	              ../Vendor/limine/limine-eltorito-efi.bin iso_root
 	COMMAND xorriso -as mkisofs -b limine-cd.bin
-	            -no-emul-boot -boot-load-size 4 -boot-info-table
-	            --efi-boot limine-eltorito-efi.bin
-	            -efi-boot-part --efi-boot-image --protective-msdos-label
+	                -no-emul-boot -boot-load-size 4 -boot-info-table
+	                --efi-boot limine-eltorito-efi.bin
+	                -efi-boot-part --efi-boot-image --protective-msdos-label
 					iso_root -o _qemu_img
 	COMMAND ./../Vendor/limine/limine-install _qemu_img
 	BYPRODUCTS _qemu_img
@@ -27,7 +27,7 @@ add_custom_target( img
 
 add_custom_target( run
 	DEPENDS img
-	COMMAND qemu-system-x86_64 -cdrom _qemu_img -debugcon stdio -m 1024M
+	COMMAND qemu-system-x86_64 -cdrom _qemu_img -debugcon stdio -m 1G
 	VERBATIM
 )
 

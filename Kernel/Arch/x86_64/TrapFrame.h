@@ -1,6 +1,6 @@
 #pragma once
 
-#include <AXUtil/Types.h>
+#include <AXUtil/Helpers.h>
 #include <Kernel/Arch/x86_64/RegisterState.h>
 
 struct TrapFrame {

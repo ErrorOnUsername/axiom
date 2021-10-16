@@ -2,7 +2,7 @@ ENTRY( k_start )
 
 SECTIONS
 {
-	. = 0xffffffff80200000;
+	. = 0xffffffff80000000 + 2M;
 
 	.stivale2hdr :
 	{

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
 #include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
 
@@ -8,7 +9,7 @@
 #define IDT_INTERRUPT_GATE_TA 0x8e
 #define IDT_TRAP_GATE_TA      0x8f
 
-namespace Kernel {
+namespace Kernel::IDT {
 
 struct IDTEntryDescriptor {
 	uint16_t offset_0;

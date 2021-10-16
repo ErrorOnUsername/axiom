@@ -1,8 +1,9 @@
 #include "GDT.h"
 
+#include <AXUtil/Types.h>
 #include <Kernel/k_stdio.h>
 
-namespace Kernel {
+namespace Kernel::GDT {
 
 GDT custom_gdt = {
 	{0, 0, 0, 0x00, 0x00, 0}, /* NULL */
@@ -22,7 +23,7 @@ void init_gdt()
 	descriptor.size = sizeof(custom_gdt) - 1;
 	descriptor.offset = (uint64_t)&custom_gdt;
 	load_gdt(&descriptor);
-	k_printf("[GDT] loaded with size: %x offset: %xl\n", (uint32_t)descriptor.size, descriptor.offset);
+	k_printf("[GDT] | loaded GDT with size: %x offset: %xl\n", (uint32_t)descriptor.size, descriptor.offset);
 }
 
 }
