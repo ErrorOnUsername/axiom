@@ -1,38 +1,22 @@
 #pragma once
 
 #include <AXUtil/Bitmap.h>
-#include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
 
 namespace Kernel::Memory {
 
-template<size_t CHUNK_SIZE, uint8_t MALLOC_CLEAR_BYTE, uint8_t FREE_CLEAR_BYTE>
+template<size_t DATA_SIZE, size_t CHUNK_SIZE, uint8_t MALLOC_SCRUB_BYTE, uint8_t FREE_SCRUB_BYTE>
 class Heap {
-	MAKE_NONCOPYABLE(Heap);
-
-	struct AllocationHeader {
-		size_t size;
-	};
 public:
-	Heap(uint8_t* data, size_t size)
-		: m_data(data)
-		, m_size(size - (size % CHUNK_SIZE))
-		, m_bitmap(data + 
+	Heap(uint8_t* heap_pool, size_t pool_size)
+		: m_heap_pool(heap_pool)
+		, m_pool_size(pool_size)
 	{ }
-
-	void* allocate(size_t)
-	{ }
-
-	void free(void*)
-	{ }
-
 private:
-	static 
+	uint8_t* m_heap_pool;
+	size_t m_pool_size;
 
 	AX::Bitmap m_bitmap;
-
-	uint8_t* m_data;
-	size_t m_size;
 };
 
 }

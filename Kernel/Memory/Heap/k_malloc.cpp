@@ -1,7 +1,7 @@
 #include "k_malloc.h"
 
 #include <AXUtil/Helpers.h>
-#include <Kernel/std_lib.h>
+#include <Kernel/Std.h>
 
 #define K_MALLOC_POOL_SIZE (4 * MiB)
 #define BITMAP_CHUNK_SIZE 32
@@ -35,10 +35,8 @@ void k_malloc_init()
 // then they could literally free the entire heap, which would obviously be
 // very bad.
 //
-void* k_malloc(size_t size)
+void* k_malloc(size_t)
 {
-	AllocationHeader header { size };
-
 	// FIXME: We should probably panic when we get an OOM in the kernel, but
 	//        for now we're gonna make the responsible decision and just,
 	//        return nullptr

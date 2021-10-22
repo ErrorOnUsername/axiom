@@ -24,16 +24,16 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 		for(;;);
 	}
 
-	// #####################################################
-	// ##  Initialize OS Data Structures and Controllers  ##
-	// #####################################################
+	// =====================================================
+	// ==  Initialize OS Data Structures and Controllers  ==
+	// =====================================================
 
 	GDT::init_gdt();
 	IDT::init_idt();
 
-	// #####################################################
-	// ##      Create Generic Bootloader Memory Map       ##
-	// #####################################################
+	// =====================================================
+	// ==      Create Generic Bootloader Memory Map       ==
+	// =====================================================
 
 	uint64_t memory_map_entry_count = memory_map_tag->entries;
 	stivale2_mmap_entry* memmap_entries = memory_map_tag->memmap;
@@ -49,19 +49,19 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 		.entries = &memory_map_entries[0],
 	};
 
-	// #####################################################
-	// ##            Initialize Memory Manager            ##
-	// #####################################################
+	// =====================================================
+	// ==            Initialize Memory Manager            ==
+	// =====================================================
 
 	if(Memory::MemoryManager::initialize(memory_map) == KResult::Error) {
 		k_printf("Failed to create memory manager.");
 		for(;;);
 	}
 
-	// #####################################################
-	// ##                 Userspace Time!                 ##
-	// #####################################################
-	
+	// =====================================================
+	// ==                 Userspace Time!                 ==
+	// =====================================================
+
 	// This looks ugly, but that's ok. It looks pretty when it gets printed.
 	const char* banner = "__          ________ _      _____ ____  __  __ ______     _______ ____\n"
 	                     "\\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____|   |__   __/ __ \\\n"

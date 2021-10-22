@@ -9,7 +9,7 @@
 #define __STRINGIFY_HELPER(x) #x
 #define __STRINGIFY__(x) __STRINGIFY_HELPER(x)
 
-#define ERROR(msg) __attribute__((diagnose_if(1, msg, "error")))
+#define ERROR(msg) __attribute__((error(msg)))
 
 #define NAKED __attribute__((naked))
 #define PACKED __attribute__((packed))

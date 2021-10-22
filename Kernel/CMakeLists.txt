@@ -10,14 +10,23 @@ set( KERNEL_SOURCES
 	k_debug.cpp
 )
 
+set( KERNEL_HEAP_SOURCES
+	Memory/Heap/k_malloc.cpp
+)
+
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g0 -I -O2" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffreestanding -fno-stack-protector -fno-pic -no-pie" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-80387 -mno-mmx -mno-3dnow -mcmodel=kernel " )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-sse -mno-sse2 -mno-red-zone" )
 
+add_definitions( -DKERNEL )
+
 add_link_options( LINKER: -T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
 	-nostdlib -z max-page-size=0x1000
 )
 
+add_library( k_heap STATIC ${KERNEL_HEAP_SOURCES} )
+
 add_executable( Kernel ${KERNEL_SOURCES} )
+target_link_libraries( Kernel k_heap )
