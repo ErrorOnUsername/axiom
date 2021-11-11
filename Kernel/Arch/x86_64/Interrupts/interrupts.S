@@ -1,11 +1,13 @@
 .macro isr_err_stub vec
 isr_stub_\vec:
+	movl $\vec, %edi
 	call exception_handler
 	iretq
 .endm
 
 .macro isr_no_err_stub vec
 isr_stub_\vec:
+	movl $\vec, %edi
 	call exception_handler
 	iretq
 .endm

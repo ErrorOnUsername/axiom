@@ -1,7 +1,6 @@
 #!/bin/zsh
 
 DIR="$(pwd)"
-PATCHES_DIR="$DIR/Patches"
 SOURCES_DIR="$DIR/Sources"
 
 ARCH="x86_64"

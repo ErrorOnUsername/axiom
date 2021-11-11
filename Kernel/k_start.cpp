@@ -2,12 +2,14 @@
 #include <AXUtil/Types.h>
 #include <Kernel/IO.h>
 #include <Kernel/k_stdio.h>
+#include <Kernel/Arch/CPU.h>
 #include <Kernel/Arch/x86_64/Boot/boot.h>
 #include <Kernel/Arch/x86_64/Boot/stivale2.h>
 #include <Kernel/Arch/x86_64/GDT/GDT.h>
 #include <Kernel/Arch/x86_64/Interrupts/IDT.h>
 #include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
 #include <Kernel/Memory/MemoryManager.h>
+#include <Kernel/Memory/Heap/k_malloc.h>
 
 namespace Kernel {
 
@@ -24,6 +26,8 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 		for(;;);
 	}
 
+	k_malloc_init();
+
 	// =====================================================
 	// ==  Initialize OS Data Structures and Controllers  ==
 	// =====================================================
@@ -37,15 +41,13 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 
 	uint64_t memory_map_entry_count = memory_map_tag->entries;
 	stivale2_mmap_entry* memmap_entries = memory_map_tag->memmap;
-
 	BootloaderMemoryMapEntry memory_map_entries[memory_map_entry_count];
 
-	for(uint64_t i = 0; i < memory_map_entry_count; i++) {
+	for(uint64_t i = 0; i < memory_map_entry_count; i++)
 		memory_map_entries[i] = memory_map_entry_from_stivale2_entry(memmap_entries[i]);
-	}
 
 	BootloaderMemoryMap memory_map = {
-		.length = memory_map_tag->entries,
+		.length = memory_map_entry_count,
 		.entries = &memory_map_entries[0],
 	};
 
@@ -55,27 +57,33 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 
 	if(Memory::MemoryManager::initialize(memory_map) == KResult::Error) {
 		k_printf("Failed to create memory manager.");
-		for(;;);
+		CPU::halt();
 	}
 
 	// =====================================================
+	// ==               Start the Scheduler               ==
+	// ==                      [WIP]                      ==
+	// =====================================================
+
+	// =====================================================
 	// ==                 Userspace Time!                 ==
+	// ==                      [WIP]                      ==
 	// =====================================================
 
 	// This looks ugly, but that's ok. It looks pretty when it gets printed.
 	const char* banner = "__          ________ _      _____ ____  __  __ ______     _______ ____\n"
 	                     "\\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____|   |__   __/ __ \\\n"
-						 " \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__         | | | |  | |\n"
-						 "  \\ \\/  \\/ / |  __| | |   | |   | |  | | |\\/| |  __|        | | | |  | |\n"
-						 "   \\  /\\  /  | |____| |___| |___| |__| | |  | | |____       | | | |__| /\n"
-						 "    \\/  \\/   |______|______\\_____\\____/|_|  |_|______|      |_|  \\____/\n"
-						 "\n"
-						 "          __   _______ ____  __  __\n"
-						 "    /\\    \\ \\ / /_   _/ __ \\|  \\/  |\n"
-						 "   /  \\    \\ V /  | || |  | | \\  / |\n"
-						 "  / /\\ \\    > <   | || |  | | |\\/| |\n"
-						 " / ____ \\  / . \\ _| || |__| | |  | |\n"
-						 "/_/    \\_\\/_/ \\_\\_____\\____/|_|  |_|\n";
+	                     " \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__         | | | |  | |\n"
+	                     "  \\ \\/  \\/ / |  __| | |   | |   | |  | | |\\/| |  __|        | | | |  | |\n"
+	                     "   \\  /\\  /  | |____| |___| |___| |__| | |  | | |____       | | | |__| /\n"
+	                     "    \\/  \\/   |______|______\\_____\\____/|_|  |_|______|      |_|  \\____/\n"
+	                     "\n"
+	                     "          __   _______ ____  __  __\n"
+	                     "    /\\    \\ \\ / /_   _/ __ \\|  \\/  |\n"
+	                     "   /  \\    \\ V /  | || |  | | \\  / |\n"
+	                     "  / /\\ \\    > <   | || |  | | |\\/| |\n"
+	                     " / ____ \\  / . \\ _| || |__| | |  | |\n"
+	                     "/_/    \\_\\/_/ \\_\\_____\\____/|_|  |_|\n";
 
 
 	k_printf("%s\n", banner);

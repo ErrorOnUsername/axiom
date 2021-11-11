@@ -55,38 +55,114 @@ int k_printf(const char* fmt, ...)
 				c = fmt[++idx];
 				switch(c) {
 					/* int type */
+					case 'i':
 					case 'd': {
-						int32_t value = va_arg(args, int32_t);
+						if(fmt[++idx] == 'l') {
+							int64_t value = va_arg(args, int64_t);
 
-						int32_t reverse_value = 0;
-						int32_t place = 0;
-						while(value != 0) {
 							if(value < 0) {
 								dbg_putchar('-');
 								value *= -1;
-								continue;
 							}
-							reverse_value += value % 10;
-							reverse_value *= 10;
-							value /= 10;
-							place++;
-						}
 
-						while(place != 0) {
-							uint32_t digit = reverse_value % 10;
-							dbg_putchar(lowercase_hex_values[digit]);
-							reverse_value /= 10;
-							place--;
+							int64_t tmp_value = value / 10;
+							uint64_t place = 1;
+							while(tmp_value != 0) {
+								place *= 10;
+								tmp_value /= 10;
+							}
+
+							uint8_t current_digit = 0;
+							while(place != 0) {
+								current_digit = value / place;
+								dbg_putchar('0' + current_digit);
+								value %= place;
+								place /= 10;
+							}
+						} else {
+							int32_t value = va_arg(args, int32_t);
+
+							if(value < 0) {
+								dbg_putchar('-');
+								value *= -1;
+							}
+
+							int32_t tmp_value = value / 10;
+							uint32_t place = 1;
+							while(tmp_value != 0) {
+								place *= 10;
+								tmp_value /= 10;
+							}
+
+							uint8_t current_digit = 0;
+							while(place != 0) {
+								current_digit = value / place;
+								dbg_putchar('0' + current_digit);
+								value %= place;
+								place /= 10;
+							}
 						}
 
 						break;
 					}
-					case 'i':
-						break;
 
 					/* unsigned int type */
-					case 'u':
-						/* decimal notation */
+					case 'u': {
+						c = fmt[++idx];
+						if(c == 'l') {
+							uint64_t value = va_arg(args, uint64_t);
+							uint64_t tmp_value = value / 10;
+							uint64_t place = 1;
+
+							while(tmp_value != 0) {
+								place *= 10;
+								tmp_value /= 10;
+							}
+
+							uint8_t current_digit = 0;
+							while(place != 0) {
+								current_digit = value / place;
+								dbg_putchar('0' + current_digit);
+								value %= place;
+								place /= 10;
+							}
+						} else if(c == 's') {
+							size_t value = va_arg(args, uint64_t);
+							size_t tmp_value = value / 10;
+							uint64_t place = 1;
+
+							while(tmp_value != 0) {
+								place *= 10;
+								tmp_value /= 10;
+							}
+
+							uint8_t current_digit = 0;
+							while(place != 0) {
+								current_digit = value / place;
+								dbg_putchar('0' + current_digit);
+								value %= place;
+								place /= 10;
+							}
+						} else {
+							uint32_t value = va_arg(args, uint32_t);
+							uint32_t tmp_value = value / 10;
+							uint64_t place = 1;
+
+							while(tmp_value != 0) {
+								place *= 10;
+								tmp_value /= 10;
+							}
+
+							uint8_t current_digit = 0;
+							while(place != 0) {
+								current_digit = value / place;
+								dbg_putchar('0' + current_digit);
+								value %= place;
+								place /= 10;
+							}
+						}
+						break;
+					}
 					case 'o':
 						/* octal notation */
 						break;
@@ -218,6 +294,9 @@ int k_printf(const char* fmt, ...)
 						}
 						break;
 					}
+
+					default:
+						dbg_putchar('%');
 				}
 				idx++;
 				break;

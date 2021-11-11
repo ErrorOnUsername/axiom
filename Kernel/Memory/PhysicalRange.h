@@ -18,9 +18,14 @@ enum class PhysicalRangeType {
 };
 
 struct PhysicalRange {
+	PhysicalRangeType type;
 	PhysicalAddress address;
-	uint64_t size {0};
-	PhysicalRangeType type = PhysicalRangeType::Unknown;
+	uint64_t size = 0;
+};
+
+struct ContiguousPhysicalRange {
+	uint64_t start;
+	uint64_t end;
 };
 
 }

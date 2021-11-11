@@ -19,7 +19,6 @@ void k_malloc_init();
 
 [[gnu::malloc, gnu::alloc_size(1)]]void* k_malloc(size_t);
 void k_free(void*);
-void k_free_sized(void*, size_t);
 
 inline void* operator new(size_t, void* ptr) { return ptr; }
 inline void* operator new[](size_t, void* ptr) { return ptr; }

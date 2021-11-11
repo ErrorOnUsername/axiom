@@ -6,7 +6,7 @@
 
 namespace Kernel {
 
-static uint8_t k_stack[4096];
+static uint8_t k_stack[32768];
 
 static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.tag = {
