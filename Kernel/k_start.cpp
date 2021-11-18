@@ -1,6 +1,8 @@
 #include <AXUtil/Assert.h>
+#include <AXUtil/List.h>
 #include <AXUtil/Types.h>
 #include <Kernel/IO.h>
+#include <Kernel/Std.h>
 #include <Kernel/k_stdio.h>
 #include <Kernel/Arch/CPU.h>
 #include <Kernel/Arch/x86_64/Boot/boot.h>

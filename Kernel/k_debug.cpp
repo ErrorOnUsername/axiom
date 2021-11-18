@@ -57,7 +57,9 @@ int k_printf(const char* fmt, ...)
 					/* int type */
 					case 'i':
 					case 'd': {
-						if(fmt[++idx] == 'l') {
+						if(fmt[idx + 1] == 'l') {
+							idx++;
+
 							int64_t value = va_arg(args, int64_t);
 
 							if(value < 0) {
@@ -108,8 +110,10 @@ int k_printf(const char* fmt, ...)
 
 					/* unsigned int type */
 					case 'u': {
-						c = fmt[++idx];
+						c = fmt[idx + 1];
 						if(c == 'l') {
+							idx++;
+
 							uint64_t value = va_arg(args, uint64_t);
 							uint64_t tmp_value = value / 10;
 							uint64_t place = 1;
@@ -127,6 +131,8 @@ int k_printf(const char* fmt, ...)
 								place /= 10;
 							}
 						} else if(c == 's') {
+							idx++;
+
 							size_t value = va_arg(args, uint64_t);
 							size_t tmp_value = value / 10;
 							uint64_t place = 1;

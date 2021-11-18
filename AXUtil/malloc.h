@@ -3,8 +3,8 @@
 #ifdef KERNEL
 
 #include <Kernel/Memory/Heap/k_malloc.h>
-#define malloc kmalloc
-#define free kfree
+#define malloc k_malloc
+#define free k_free
 
 #else
 
