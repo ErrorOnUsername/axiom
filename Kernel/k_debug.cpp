@@ -333,27 +333,12 @@ static char const* parse_log_level_prefix(uint16_t log_mode)
 	return "";
 }
 
-static char const* parse_log_location_prefix(uint16_t log_mode)
-{
-	if(log_mode & LogModeBoot) {
-		return "boot";
-	} else if(log_mode & LogModeKMalloc) {
-		return "k_malloc";
-	} else if(log_mode & LogModeMemoryManager) {
-		return "MM";
-	} else if(log_mode & LogModeScheduler) {
-		return "Scheduler";
-	}
-	return "";
-}
-
 void klog_impl(uint16_t log_mode, DebugFileLocation calling_file, char const* fmt, ...) {
-	char const* location_prefix = parse_log_location_prefix(log_mode);
 	char const* level_prefix = parse_log_level_prefix(log_mode);
 
-	k_printf("[[1;36m %s | %s:%u [0m] %s: "
-	       , location_prefix
+	k_printf("[[1;36m %s:%u | %s(...) [0m] %s: "
 	       , calling_file.get_root_filename(), calling_file.line
+	       , calling_file.function_name
 	       , level_prefix);
 
 	va_list args;

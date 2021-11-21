@@ -3,15 +3,15 @@
 
 #include <AXUtil/Types.h>
 
-#define klogf(mode, msg, ...)                                          \
-	Kernel::klog_impl(mode                                             \
-	                , Kernel::DebugFileLocation { __FILE__, __LINE__ } \
-					, msg                                              \
+#define klogf(mode, msg, ...)                                                               \
+	Kernel::klog_impl(mode                                                                  \
+	                , Kernel::DebugFileLocation { __FILE__, __FUNCTION__, __LINE__ } \
+					, msg                                                                   \
 					, __VA_ARGS__)
 
-#define klog(mode, msg)                                                \
-	Kernel::klog_impl(mode                                             \
-	                , Kernel::DebugFileLocation { __FILE__, __LINE__ } \
+#define klog(mode, msg)                                                                     \
+	Kernel::klog_impl(mode                                                                  \
+	                , Kernel::DebugFileLocation { __FILE__, __FUNCTION__, __LINE__ } \
 					, msg)
 
 namespace Kernel {
@@ -28,6 +28,7 @@ enum LogMode : uint16_t {
 
 struct DebugFileLocation {
 	char const* filepath;
+	char const* function_name;
 	uint32_t line;
 
 	char const* get_root_filename();
