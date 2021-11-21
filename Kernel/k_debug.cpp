@@ -1,30 +1,27 @@
 #include <stdarg.h>
 
 #include <AXUtil/Types.h>
+#include <Kernel/k_debug.h>
 #include <Kernel/IO.h>
 
 namespace Kernel {
 
-static void kpf_color_enable()
-{
-	IO::out8(IO::QEMU_SERIAL_PORT, 0x1b);
-	IO::out8(IO::QEMU_SERIAL_PORT, '[');
-	IO::out8(IO::QEMU_SERIAL_PORT, '1');
-	IO::out8(IO::QEMU_SERIAL_PORT, ';');
-	IO::out8(IO::QEMU_SERIAL_PORT, '3');
-	IO::out8(IO::QEMU_SERIAL_PORT, '1');
-	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
-}
-
-static void kpf_color_disable()
-{
-	IO::out8(IO::QEMU_SERIAL_PORT, 0x1b);
-	IO::out8(IO::QEMU_SERIAL_PORT, '[');
-	IO::out8(IO::QEMU_SERIAL_PORT, '0');
-	IO::out8(IO::QEMU_SERIAL_PORT, 'm');
-}
-
 extern "C" {
+
+char const* DebugFileLocation::get_root_filename()
+{
+	size_t last_forward_slash_index = 0;
+
+	if(filepath[0] == '\0')
+		return "";
+
+	for(size_t idx = 0; filepath[idx + 1] != '\0'; idx++) {
+		if(filepath[idx] == '/')
+			last_forward_slash_index = idx;
+	}
+
+	return &filepath[last_forward_slash_index + 1];
+}
 
 static void dbg_putchar(char c)
 {
@@ -38,16 +35,13 @@ static void dbg_putchar(char c)
 * read the printf(3) man pages. Link:
 * https://man7.org/linux/man-pages/man3/printf.3.html
 */
-int k_printf(const char* fmt, ...)
+int k_vprintf(const char* fmt, va_list args)
 {
 	constexpr const char* lowercase_hex_values = "0123456789abcdef";
 	constexpr const char* uppercase_hex_values = "0123456789ABCDEF";
 
-	kpf_color_enable();
 	size_t idx = 0;
 	char c = ':';
-	va_list args;
-	va_start(args, fmt);
 	while(c != '\0') {
 		c = fmt[idx];
 		switch(c) {
@@ -312,11 +306,63 @@ int k_printf(const char* fmt, ...)
 				idx++;
 		}
 	}
-	va_end(args);
-	kpf_color_disable();
 	return 0;
 }
 
+int k_printf(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	k_vprintf(fmt, args);
+	va_end(args);
+	return 0;
+}
+
+}
+
+static char const* parse_log_level_prefix(uint16_t log_mode)
+{
+	if(log_mode & LogModeError) {
+		return "[1;31merror[0m";
+	} else if(log_mode & LogModeWarning) {
+		return "[1;33mwarning[0m";
+	} else if(log_mode & LogModeInfo) {
+		return "[1;32minfo[0m";
+	}
+
+	return "";
+}
+
+static char const* parse_log_location_prefix(uint16_t log_mode)
+{
+	if(log_mode & LogModeBoot) {
+		return "boot";
+	} else if(log_mode & LogModeKMalloc) {
+		return "k_malloc";
+	} else if(log_mode & LogModeMemoryManager) {
+		return "MM";
+	} else if(log_mode & LogModeScheduler) {
+		return "Scheduler";
+	}
+	return "";
+}
+
+void klog_impl(uint16_t log_mode, DebugFileLocation calling_file, char const* fmt, ...) {
+	char const* location_prefix = parse_log_location_prefix(log_mode);
+	char const* level_prefix = parse_log_level_prefix(log_mode);
+
+	k_printf("[[1;36m %s | %s:%u [0m] %s: "
+	       , location_prefix
+	       , calling_file.get_root_filename(), calling_file.line
+	       , level_prefix);
+
+	va_list args;
+
+	va_start(args, fmt);
+	k_vprintf(fmt, args);
+	va_end(args);
+
+	k_printf("\n");
 }
 
 }

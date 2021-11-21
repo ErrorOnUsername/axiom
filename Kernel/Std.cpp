@@ -1,5 +1,6 @@
 #include "Std.h"
 
+#include <AXUtil/Assert.h>
 #include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
 
@@ -9,7 +10,7 @@ void* memset(void* destination_ptr, int value, size_t size)
 
 	if(!(dest & 0x3)) {
 		size_t size_count = size / sizeof(size_t);
-		size_t exploded_value = exlode_byte((uint8_t)value);
+		size_t exploded_value = explode_byte((uint8_t)value);
 
 		asm volatile(
 			"rep stosq\n"
@@ -29,4 +30,12 @@ void* memset(void* destination_ptr, int value, size_t size)
 		: "memory");
 
 	return destination_ptr;
+}
+
+extern "C" int __cxa_atexit(void (*) (void*), void*, void*);
+
+extern "C" int __cxa_atexit(void (*) (void*), void*, void*)
+{
+	ASSERT_NOT_REACHED();
+	return 0;
 }

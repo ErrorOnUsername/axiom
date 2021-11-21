@@ -3,7 +3,7 @@
 #include <AXUtil/Types.h>
 #include <Kernel/Arch/x86_64/GDT/GDT.h>
 #include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
-#include <Kernel/k_stdio.h>
+#include <Kernel/k_debug.h>
 
 namespace Kernel::IDT {
 
@@ -39,7 +39,7 @@ void init_idt()
 
 	asm volatile("lidt %0" :: "memory"(idtr));
 	asm volatile("sti");
-	k_printf("[IDT] | loaded IDT with size: %x offset: %xl\n", (uint32_t)idtr.size, idtr.offset);
+	klogf(LogModeInfo | LogModeBoot, "loaded IDT with size: %x offset: %xl", idtr.size, idtr.offset);
 }
 
 }

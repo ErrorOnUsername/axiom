@@ -3,7 +3,7 @@
 #include <AXUtil/Helpers.h>
 #include <Kernel/Arch/CPU.h>
 // FIXME: Think of a better way of doing this
-#include <Kernel/k_stdio.h>
+#include <Kernel/k_debug.h>
 
 #define __HANDLE_ASSERT_FAILED_WITH_MESSAGE__(condition, msg...)                              \
 	Kernel::k_printf("[" __FILE__ ":" __STRINGIFY__(__LINE__) "] Assertion Failed: " msg); \

@@ -18,7 +18,10 @@ class Heap {
 	static size_t chunks_needed(size_t size)
 	{
 		// Round up the size to chunk boundaries so that we can fit all the data.
-		return (size + (CHUNK_SIZE - (size % CHUNK_SIZE))) / CHUNK_SIZE;
+		if(size % CHUNK_SIZE != 0)
+			return (size + (CHUNK_SIZE - (size % CHUNK_SIZE))) / CHUNK_SIZE;
+		else
+			return size / CHUNK_SIZE;
 	}
 
 	static AllocationHeader const* allocation_header_at_addr(void* addr)
@@ -54,7 +57,7 @@ public:
 		m_bitmap.set_range(chunk_index, chunks, true);
 		m_allocated_chunks += chunks;
 
-		// TODO: Scrub out the buffer before returning the pointer?
+		// TODO: Scrub out the buffej before returning the pointer?
 		//       It could be good for security, but slow.
 		return (void*)((uint64_t)header + sizeof(AllocationHeader));
 	}

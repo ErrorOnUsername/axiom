@@ -1,7 +1,7 @@
 #include "GDT.h"
 
 #include <AXUtil/Types.h>
-#include <Kernel/k_stdio.h>
+#include <Kernel/k_debug.h>
 
 namespace Kernel::GDT {
 
@@ -23,7 +23,7 @@ void init_gdt()
 	descriptor.size = sizeof(custom_gdt) - 1;
 	descriptor.offset = (uint64_t)&custom_gdt;
 	load_gdt(&descriptor);
-	k_printf("[GDT] | loaded GDT with size: %x offset: %xl\n", (uint32_t)descriptor.size, descriptor.offset);
+	klogf(LogModeInfo | LogModeBoot , "loaded GDT with size: %x offset: %xl", descriptor.size, descriptor.offset);
 }
 
 }

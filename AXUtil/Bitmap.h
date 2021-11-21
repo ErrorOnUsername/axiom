@@ -23,7 +23,7 @@ public:
 
 		for(size_t i = 0; i < m_chunk_count; i++) {
 			current_chunk_sector = i / 8;
-			current_chunk_bit = i % 8;
+			current_chunk_bit = 7 - (i % 8);
 
 			if(!(m_raw_data[current_chunk_sector] & (1 << current_chunk_bit)))
 				running_length++;
@@ -52,14 +52,12 @@ public:
 		uint8_t current_chunk_bit= 0;
 		for(size_t i = index; i < index + length; i++) {
 			current_chunk_sector = i / 8;
-			current_chunk_bit = i % 8;
+			current_chunk_bit = 7 - (i % 8);
 
 			if(value) {
 				m_raw_data[current_chunk_sector] |= 1 << current_chunk_bit;
-				return;
 			} else {
 				m_raw_data[current_chunk_sector] -= 1 << current_chunk_bit;
-				return;
 			}
 		}
 	}
@@ -72,7 +70,7 @@ public:
 	inline bool verify(size_t chunk_index)
 	{
 		uint8_t chunk_sector = m_raw_data[chunk_index / 8];
-		uint8_t chunk_sector_offset = chunk_index % 8;
+		uint8_t chunk_sector_offset = 7 - (chunk_index % 8);
 
 		return chunk_sector & (1 << chunk_sector_offset);
 	}

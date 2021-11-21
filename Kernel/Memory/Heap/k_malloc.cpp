@@ -2,7 +2,7 @@
 
 #include <AXUtil/Helpers.h>
 #include <AXUtil/Lock.h>
-#include <Kernel/k_stdio.h>
+#include <Kernel/k_debug.h>
 #include <Kernel/Std.h>
 #include <Kernel/Arch/CPU.h>
 #include <Kernel/Memory/Heap/Heap.h>
@@ -15,7 +15,7 @@ using KHeap = Kernel::Memory::Heap<K_MALLOC_POOL_SIZE, BITMAP_CHUNK_SIZE>;
 static AX::Lock s_heap_lock;
 
 static KHeap* k_malloc_heap_ptr;
-SECTION(".kernel_heap") static uint8_t k_malloc_pool[K_MALLOC_POOL_SIZE];
+SECTION(.kernel_heap) static uint8_t k_malloc_pool[K_MALLOC_POOL_SIZE];
 alignas(KHeap) static uint8_t g_kmalloc_heap_raw[sizeof(KHeap)];
 
 void k_malloc_init()
@@ -47,6 +47,7 @@ void* k_malloc(size_t bytes)
 	AX::ScopeLocker locker(s_heap_lock);
 
 	void* ptr = k_malloc_heap_ptr->allocate(bytes);
+
 	return ptr;
 }
 

@@ -52,6 +52,20 @@ struct List {
 		return storage[index];
 	}
 
+	T& last()
+	{
+		ASSERT(count > 0);
+
+		return storage[count - 1];
+	}
+
+	T const& last() const
+	{
+		ASSERT(count > 0);
+
+		return storage[count - 1];
+	}
+
 	T& operator[](size_t index) { return at(index); }
 	T const& operator[](size_t index) const { return at(index); }
 
@@ -121,6 +135,11 @@ struct List {
 				storage[i - 1] = storage[i];
 		}
 		return true;
+	}
+
+	bool is_empty() const
+	{
+		return count == 0;
 	}
 
 	void ensure_capacity(size_t new_capacity)
