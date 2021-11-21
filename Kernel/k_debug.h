@@ -16,14 +16,10 @@
 
 namespace Kernel {
 
-enum LogMode : uint16_t {
-	LogModeInfo          = 1 << 0,
-	LogModeWarning       = 1 << 1,
-	LogModeError         = 1 << 2,
-	LogModeBoot          = 1 << 3,
-	LogModeKMalloc       = 1 << 4,
-	LogModeMemoryManager = 1 << 5,
-	LogModeScheduler     = 1 << 6,
+enum class LogLevel {
+	Info,
+	Warning,
+	Error,
 };
 
 struct DebugFileLocation {
@@ -37,6 +33,6 @@ struct DebugFileLocation {
 extern "C" int k_printf(char const* fmt, ...);
 extern "C" int k_vprintf(char const* fmt, va_list args);
 
-void klog_impl(uint16_t log_mode, DebugFileLocation calling_file, char const* fmt, ...);
+void klog_impl(LogLevel log_level, DebugFileLocation calling_file, char const* fmt, ...);
 
 }

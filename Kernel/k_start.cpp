@@ -21,10 +21,10 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 	auto* memory_map_tag = (stivale2_struct_tag_memmap*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
 	if (memory_map_tag == nullptr) {
-		klog(LogModeError | LogModeBoot, "Couldn't find the stivale2 memory map tag :'(");
+		klog(LogLevel::Error, "Couldn't find the stivale2 memory map tag :'(");
 		for(;;);
 	} else if(framebuffer_tag == nullptr) {
-		klog(LogModeError | LogModeBoot, "Couldn't find the stivale2 framebuffer tag :'(");
+		klog(LogLevel::Error, "Couldn't find the stivale2 framebuffer tag :'(");
 		for(;;);
 	}
 
@@ -54,7 +54,7 @@ extern "C" void k_start(stivale2_struct* stivale2_struct)
 	// =====================================================
 
 	if(Memory::MemoryManager::initialize(memory_map) == KResult::Error) {
-		klog(LogModeError | LogModeMemoryManager, "Failed to create memory manager.");
+		klog(LogLevel::Error, "Failed to create memory manager.");
 		CPU::halt();
 	}
 

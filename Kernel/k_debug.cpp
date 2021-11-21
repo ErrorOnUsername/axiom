@@ -320,21 +320,21 @@ int k_printf(const char* fmt, ...)
 
 }
 
-static char const* parse_log_level_prefix(uint16_t log_mode)
+static char const* parse_log_level_prefix(LogLevel log_level)
 {
-	if(log_mode & LogModeError) {
+	if(log_level == LogLevel::Error) {
 		return "[1;31merror[0m";
-	} else if(log_mode & LogModeWarning) {
+	} else if(log_level == LogLevel::Warning) {
 		return "[1;33mwarning[0m";
-	} else if(log_mode & LogModeInfo) {
+	} else if(log_level == LogLevel::Info) {
 		return "[1;32minfo[0m";
+	} else {
+		return "";
 	}
-
-	return "";
 }
 
-void klog_impl(uint16_t log_mode, DebugFileLocation calling_file, char const* fmt, ...) {
-	char const* level_prefix = parse_log_level_prefix(log_mode);
+void klog_impl(LogLevel log_level, DebugFileLocation calling_file, char const* fmt, ...) {
+	char const* level_prefix = parse_log_level_prefix(log_level);
 
 	k_printf("[[1;36m %s:%u | %s(...) [0m] %s: "
 	       , calling_file.get_root_filename(), calling_file.line

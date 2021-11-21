@@ -23,7 +23,7 @@ void init_gdt()
 	descriptor.size = sizeof(custom_gdt) - 1;
 	descriptor.offset = (uint64_t)&custom_gdt;
 	load_gdt(&descriptor);
-	klogf(LogModeInfo | LogModeBoot , "loaded GDT with size: %x offset: %xl", descriptor.size, descriptor.offset);
+	klogf(LogLevel::Info, "loaded GDT with size: %x offset: %xl", descriptor.size, descriptor.offset);
 }
 
 }

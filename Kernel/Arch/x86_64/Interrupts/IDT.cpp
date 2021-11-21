@@ -39,7 +39,7 @@ void init_idt()
 
 	asm volatile("lidt %0" :: "memory"(idtr));
 	asm volatile("sti");
-	klogf(LogModeInfo | LogModeBoot, "loaded IDT with size: %x offset: %xl", idtr.size, idtr.offset);
+	klogf(LogLevel::Info, "loaded IDT with size: %x offset: %xl", idtr.size, idtr.offset);
 }
 
 }

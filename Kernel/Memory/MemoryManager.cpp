@@ -23,7 +23,7 @@ void MemoryManager::parse_memory_map(BootloaderMemoryMap& memory_map)
 {
 	for(uint64_t i = 0; i < memory_map.length; i++) {
 		BootloaderMemoryMapEntry& current_entry = memory_map.entries[i];
-		klogf(LogModeInfo | LogModeMemoryManager, "PhysicalRange: { address: %xl, length: %xl, type: %s }", current_entry.address, current_entry.size, memory_map_type_as_string(current_entry.type));
+		klogf(LogLevel::Info, "PhysicalRange: { address: %xl, length: %xl, type: %s }", current_entry.address, current_entry.size, memory_map_type_as_string(current_entry.type));
 
 		switch(current_entry.type) {
 			case MemoryRegionType::Usable:
@@ -103,7 +103,7 @@ void MemoryManager::parse_memory_map(BootloaderMemoryMap& memory_map)
 		//current_entry.size    -= current_entry.size % PAGE_SIZE;
 
 		if(current_entry.size < PAGE_SIZE) {
-			klogf(LogModeWarning | LogModeMemoryManager, "The bootloader reported a PhysicalRegion [%xl - %xl] with a size less than %u (one page)! Skipping it..."
+			klogf(LogLevel::Warning, "The bootloader reported a PhysicalRegion [%xl - %xl] with a size less than %u (one page)! Skipping it..."
 			    , current_entry.address
 			    , current_entry.address + (current_entry.size - 1)
 			    , PAGE_SIZE);
@@ -131,7 +131,7 @@ void MemoryManager::parse_memory_map(BootloaderMemoryMap& memory_map)
 	}
 
 	for(size_t i = 0; i < contiguous_physical_ranges.count; i++) {
-		klogf(LogModeInfo | LogModeMemoryManager, "ContiguousPhysicalRange { start: %xl, end: %xl }"
+		klogf(LogLevel::Info, "ContiguousPhysicalRange { start: %xl, end: %xl }"
 		    , contiguous_physical_ranges[i].start
 		    , contiguous_physical_ranges[i].end);
 	}
