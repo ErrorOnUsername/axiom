@@ -43,31 +43,8 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
 	}
 }
 
-const char* memory_map_type_as_string(uint32_t type)
-{
-	switch(type) {
-		case 1:
-			return "USABLE";
-		case 2:
-			return "RESERVED";
-		case 3:
-			return "ACPI RECLAIMABLE";
-		case 4:
-			return "ACPI NVS";
-		case 5:
-			return "BAD MEMORY";
-		case 0x1000:
-			return "BOOTLOADER RECLAIMABLE";
-		case 0x1001:
-			return "KERNEL AND MODULES";
-		case 0x1002:
-			return "FRAMEBUFFER";
-		default:
-			return "UNKNOWN";
-	}
-}
 
-BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const& entry)
+Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const& entry)
 {
 	return {
 		.address = entry.base,
@@ -76,7 +53,7 @@ BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entr
 	};
 }
 
-extern "C" void k_init(BootloaderMemoryMap&);
+extern "C" void k_init(Memory::BootloaderMemoryMap&);
 
 extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 {
@@ -93,12 +70,12 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 
 	uint64_t memory_map_entry_count = memory_map_tag->entries;
 	stivale2_mmap_entry* memmap_entries = memory_map_tag->memmap;
-	BootloaderMemoryMapEntry memory_map_entries[memory_map_entry_count];
+	Memory::BootloaderMemoryMapEntry memory_map_entries[memory_map_entry_count];
 
 	for(uint64_t i = 0; i < memory_map_entry_count; i++)
 		memory_map_entries[i] = memory_map_entry_from_stivale2_entry(memmap_entries[i]);
 
-	BootloaderMemoryMap memory_map = {
+	Memory::BootloaderMemoryMap memory_map = {
 		.length = memory_map_entry_count,
 		.entries = &memory_map_entries[0],
 	};

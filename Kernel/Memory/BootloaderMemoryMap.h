@@ -2,7 +2,7 @@
 
 #include <AXUtil/Types.h>
 
-namespace Kernel {
+namespace Kernel::Memory {
 
 enum MemoryRegionType : uint32_t {
 	Usable                = 1,
@@ -25,5 +25,7 @@ struct BootloaderMemoryMap {
 	uint64_t length;
 	BootloaderMemoryMapEntry* entries;
 };
+
+const char* memory_map_type_as_string(uint32_t type);
 
 }

@@ -15,7 +15,7 @@
 
 namespace Kernel {
 
-extern "C" void k_init(BootloaderMemoryMap& memory_map)
+extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map)
 {
 	k_malloc_init();
 

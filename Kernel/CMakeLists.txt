@@ -6,6 +6,7 @@ set( KERNEL_SOURCES
 	Arch/x86_64/Interrupts/interrupts.cpp
 	Arch/x86_64/Interrupts/interrupts.S
 	Arch/x86_64/Interrupts/IDT.cpp
+	Memory/BootloaderMemoryMap.cpp
 	Memory/MemoryManager.cpp
 	Std.cpp
 	k_start.cpp
