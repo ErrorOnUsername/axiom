@@ -14,8 +14,8 @@ namespace Kernel::IDT {
 struct IDTEntryDescriptor {
 	uint16_t offset_0;
 	uint16_t selector;
-	uint8_t ist;
-	uint8_t type_and_attributes;
+	uint8_t  ist;
+	uint8_t  type_and_attributes;
 	uint16_t offset_1;
 	uint32_t offset_2;
 	uint32_t reserved;

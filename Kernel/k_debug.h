@@ -3,14 +3,14 @@
 
 #include <AXUtil/Types.h>
 
-#define klogf(mode, msg, ...)                                                               \
-	Kernel::klog_impl(mode                                                                  \
+#define klogf(mode, msg, ...)                                                        \
+	Kernel::klog_impl(mode                                                           \
 	                , Kernel::DebugFileLocation { __FILE__, __FUNCTION__, __LINE__ } \
-					, msg                                                                   \
+					, msg                                                            \
 					, __VA_ARGS__)
 
-#define klog(mode, msg)                                                                     \
-	Kernel::klog_impl(mode                                                                  \
+#define klog(mode, msg)                                                              \
+	Kernel::klog_impl(mode                                                           \
 	                , Kernel::DebugFileLocation { __FILE__, __FUNCTION__, __LINE__ } \
 					, msg)
 
@@ -27,7 +27,7 @@ struct DebugFileLocation {
 	char const* function_name;
 	uint32_t line;
 
-	char const* get_root_filename();
+	char const* get_root_filename() const;
 };
 
 extern "C" int k_printf(char const* fmt, ...);

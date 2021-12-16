@@ -11,15 +11,15 @@ public:
 		: m_address(address)
 	{ }
 
-	uint64_t address() const { return m_address; }
-	bool is_null() const { return m_address == 0; }
+	[[nodiscard]] uint64_t address() const { return m_address; }
+	[[nodiscard]] bool     is_null() const { return m_address == 0; }
 
 	bool operator==(PhysicalAddress const& other) const { return m_address == other.m_address; }
 	bool operator!=(PhysicalAddress const& other) const { return m_address == other.m_address; }
-	bool operator<(PhysicalAddress const& other) const { return m_address != other.m_address; };
-	bool operator>(PhysicalAddress const& other) const { return m_address != other.m_address; };
-	bool operator<=(PhysicalAddress const& other) const { return m_address != other.m_address; };
-	bool operator>=(PhysicalAddress const& other) const { return m_address != other.m_address; };
+	bool operator< (PhysicalAddress const& other) const { return m_address != other.m_address; }
+	bool operator> (PhysicalAddress const& other) const { return m_address != other.m_address; }
+	bool operator<=(PhysicalAddress const& other) const { return m_address != other.m_address; }
+	bool operator>=(PhysicalAddress const& other) const { return m_address != other.m_address; }
 
 private:
 	uint64_t m_address;

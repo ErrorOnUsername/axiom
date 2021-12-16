@@ -19,7 +19,7 @@ GDT custom_gdt = {
 
 void init_gdt()
 {
-	DescriptorTablePointer descriptor;
+	DescriptorTablePointer descriptor { };
 	descriptor.size = sizeof(custom_gdt) - 1;
 	descriptor.offset = (uint64_t)&custom_gdt;
 	load_gdt(&descriptor);

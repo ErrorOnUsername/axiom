@@ -3,21 +3,25 @@
 #include <AXUtil/Helpers.h>
 #include <AXUtil/List.h>
 #include <Kernel/Memory/PhysicalRange.h>
+#include <Kernel/Memory/PageTable.h>
 #include <Kernel/Memory/BootloaderMemoryMap.h>
-#include <Kernel/KResult.h>
 
 namespace Kernel::Memory {
 
-struct MemoryManager {
+class MemoryManager {
 	MAKE_NONCOPYABLE(MemoryManager);
 	MAKE_NONMOVEABLE(MemoryManager);
+
+public:
 	MemoryManager() = delete;
 
-	static AX::List<PhysicalRange>           reported_physical_ranges;
-	static AX::List<ContiguousPhysicalRange> contiguous_physical_ranges;
+	static void initialize(BootloaderMemoryMap&);
+	static void parse_memory_map(BootloaderMemoryMap&);
+	static void initialize_pages();
 
-	static KResult initialize(BootloaderMemoryMap&);
-	static void    parse_memory_map(BootloaderMemoryMap&);
+private:
+	static AX::List<PhysicalRange>           m_reported_physical_ranges;
+	static AX::List<ContiguousPhysicalRange> m_contiguous_physical_ranges;
 };
 
 }

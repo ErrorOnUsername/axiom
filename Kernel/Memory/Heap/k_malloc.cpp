@@ -29,16 +29,16 @@ void k_malloc_init()
 //
 // DISCLAIMER:
 // I've never written one of these before, so I'm sure that this isn't very
-// good. So PLEASE future me come back and fix all this garbage so we don't
+// good. So PLEASE future me come back and fix all this garbage, so we don't
 // get made fun of for writing a bad malloc implementation. :)
 //
 // The basic idea is to just use a bitmap to keep track of what's free in
 // the heap (albeit in 32 byte chunks). So, when we find a space that will
 // fit our desired size, we mark that space in the bitmap as taken.
-// Additionally, we have another data stucture, tentaively named
+// Additionally, we have another data structure, tentatively named
 // `AllocationHeader`, that will store the size of the data at that section
 // in the heap. That way, we don't need to take a size in k_free. This is a
-// huge benifit because, if we freed memory according to a user's input,
+// huge benefit because, if we freed memory according to a user's input,
 // then they could literally free the entire heap, which would obviously be
 // very bad.
 //

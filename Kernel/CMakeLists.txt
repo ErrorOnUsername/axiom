@@ -1,6 +1,6 @@
 set( KERNEL_SOURCES
 	Arch/x86_64/CPU.cpp
-	Arch/x86_64/Boot/boot.cpp
+	Arch/x86_64/Boot/boot_stivale.cpp
 	Arch/x86_64/GDT/GDT.cpp
 	Arch/x86_64/GDT/load_gdt.S
 	Arch/x86_64/Interrupts/interrupts.cpp

@@ -1,4 +1,4 @@
-ENTRY( k_start )
+ENTRY( boot_entry )
 
 SECTIONS
 {

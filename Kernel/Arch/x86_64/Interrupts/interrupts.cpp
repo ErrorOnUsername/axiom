@@ -8,6 +8,7 @@ void exception_handler(uint32_t vector)
 {
 	klogf(LogLevel::Error, "EXCEPTION TRIGGERED!! [%d] HANGING...", vector);
 	asm volatile("cli; hlt");
+	for(;;);
 }
 
 }

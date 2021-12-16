@@ -8,7 +8,7 @@ namespace Kernel {
 
 extern "C" {
 
-char const* DebugFileLocation::get_root_filename()
+char const* DebugFileLocation::get_root_filename() const
 {
 	size_t last_forward_slash_index = 0;
 
@@ -28,13 +28,13 @@ static void dbg_putchar(char c)
 	IO::out8(IO::QEMU_SERIAL_PORT, c);
 }
 
-/*
-* FIXME: Actually implement this shit.
-*
-* For more information on these specifiers,
-* read the printf(3) man pages. Link:
-* https://man7.org/linux/man-pages/man3/printf.3.html
-*/
+//
+// FIXME: Finish implementing this.
+//
+// For more information on these specifiers,
+// read the printf(3) man pages. Link:
+// https://man7.org/linux/man-pages/man3/printf.3.html
+//
 int k_vprintf(const char* fmt, va_list args)
 {
 	constexpr const char* lowercase_hex_values = "0123456789abcdef";
@@ -281,9 +281,11 @@ int k_vprintf(const char* fmt, va_list args)
 					/* void* type */
 					case 'p': {
 						void* argument = va_arg(args, void*);
+
 						/* FIXME: If we ever end up supporting non-64-bit architectures, this wont work */
 						uint64_t value = (uint64_t)argument;
 						int8_t place = 60;
+
 						dbg_putchar('0');
 						dbg_putchar('x');
 
@@ -312,9 +314,11 @@ int k_vprintf(const char* fmt, va_list args)
 int k_printf(const char* fmt, ...)
 {
 	va_list args;
+
 	va_start(args, fmt);
 	k_vprintf(fmt, args);
 	va_end(args);
+
 	return 0;
 }
 

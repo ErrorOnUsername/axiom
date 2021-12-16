@@ -57,7 +57,7 @@ public:
 		m_bitmap.set_range(chunk_index, chunks, true);
 		m_allocated_chunks += chunks;
 
-		// TODO: Scrub out the buffej before returning the pointer?
+		// TODO: Scrub out the buffer before returning the pointer?
 		//       It could be good for security, but slow.
 		return (void*)((uint64_t)header + sizeof(AllocationHeader));
 	}
@@ -78,7 +78,7 @@ public:
 		// TODO: Scrub out the buffer after it's freed?
 	}
 
-	inline size_t available_chunks() const { return TOTAL_CHUNKS - m_allocated_chunks; }
+	[[nodiscard]] inline size_t available_chunks() const { return TOTAL_CHUNKS - m_allocated_chunks; }
 private:
 	static constexpr size_t TOTAL_CHUNKS = (DATA_SIZE + (DATA_SIZE % CHUNK_SIZE)) / CHUNK_SIZE;
 
