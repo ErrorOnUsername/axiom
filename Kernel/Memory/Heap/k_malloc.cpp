@@ -2,10 +2,10 @@
 
 #include <AXUtil/Helpers.h>
 #include <AXUtil/Lock.h>
-#include <Kernel/k_debug.h>
-#include <Kernel/Std.h>
-#include <Kernel/Arch/CPU.h>
-#include <Kernel/Memory/Heap/Heap.h>
+#include <kernel/k_debug.h>
+#include <kernel/std.h>
+#include <kernel/arch/CPU.h>
+#include <kernel/memory/heap/heap.h>
 
 #define K_MALLOC_POOL_SIZE (4 * MiB)
 #define BITMAP_CHUNK_SIZE 32

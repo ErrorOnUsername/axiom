@@ -2,7 +2,7 @@
 
 #include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
-#include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
+#include <kernel/arch/x86_64/descriptor_table_pointer.h>
 
 #define IDT_ENTRY_COUNT 256
 

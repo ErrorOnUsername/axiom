@@ -1,17 +1,10 @@
-#include <AXUtil/Assert.h>
-#include <AXUtil/List.h>
 #include <AXUtil/Types.h>
-#include <Kernel/Std.h>
-#include <Kernel/IO.h>
-#include <Kernel/k_debug.h>
-#include <Kernel/Arch/CPU.h>
-#include <Kernel/Arch/x86_64/Boot/boot_stivale.h>
-#include <Kernel/Arch/x86_64/Boot/stivale2.h>
-#include <Kernel/Arch/x86_64/GDT/GDT.h>
-#include <Kernel/Arch/x86_64/Interrupts/IDT.h>
-#include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
-#include <Kernel/Memory/MemoryManager.h>
-#include <Kernel/Memory/Heap/k_malloc.h>
+#include <kernel/k_debug.h>
+#include <kernel/arch/RTC.h>
+#include <kernel/arch/x86_64/GDT/GDT.h>
+#include <kernel/arch/x86_64/interrupts/IDT.h>
+#include <kernel/memory/memory_manager.h>
+#include <kernel/memory/heap/k_malloc.h>
 
 namespace Kernel {
 
@@ -22,7 +15,7 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map)
 	GDT::init_gdt();
 	IDT::init_idt();
 
-	Memory::MemoryManager::initialize(memory_map);
+	Memory::init_memory_management(memory_map);
 
 	// This looks ugly, but that's ok. It looks pretty when it gets printed.
 	const char* banner = "__          ________ _      _____ ____  __  __ ______     _______ ____\n"

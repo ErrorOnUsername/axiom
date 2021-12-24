@@ -1,5 +1,5 @@
 #include <AXUtil/Types.h>
-#include <Kernel/k_debug.h>
+#include <kernel/k_debug.h>
 
 namespace Kernel {
 

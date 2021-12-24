@@ -1,20 +1,20 @@
 set( KERNEL_SOURCES
-	Arch/x86_64/CPU.cpp
-	Arch/x86_64/Boot/boot_stivale.cpp
-	Arch/x86_64/GDT/GDT.cpp
-	Arch/x86_64/GDT/load_gdt.S
-	Arch/x86_64/Interrupts/interrupts.cpp
-	Arch/x86_64/Interrupts/interrupts.S
-	Arch/x86_64/Interrupts/IDT.cpp
-	Memory/BootloaderMemoryMap.cpp
-	Memory/MemoryManager.cpp
-	Std.cpp
+	arch/x86_64/CPU.cpp
+	arch/x86_64/boot/boot_stivale.cpp
+	arch/x86_64/GDT/GDT.cpp
+	arch/x86_64/GDT/load_gdt.S
+	arch/x86_64/interrupts/interrupts.cpp
+	arch/x86_64/interrupts/interrupts.S
+	arch/x86_64/interrupts/IDT.cpp
+	memory/bootloader_memory_map.cpp
+	memory/memory_manager.cpp
+	std.cpp
 	k_start.cpp
 	k_debug.cpp
 )
 
 set( KERNEL_HEAP_SOURCES
-	Memory/Heap/k_malloc.cpp
+	memory/heap/k_malloc.cpp
 )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g0 -I -O2" )
@@ -34,8 +34,8 @@ add_link_options(LINKER:-z,notext,-z,max-page-size=0x1000)
 
 add_library( k_heap STATIC ${KERNEL_HEAP_SOURCES} )
 
-add_executable( Kernel ${KERNEL_SOURCES} )
+add_executable( kernel ${KERNEL_SOURCES} )
 
-target_link_options(Kernel PRIVATE LINKER:-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -nostdlib -nodefaultlibs)
+target_link_options(kernel PRIVATE LINKER:-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -nostdlib -nodefaultlibs)
 
-target_link_libraries( Kernel PRIVATE gcc k_heap  )
+target_link_libraries( kernel PRIVATE gcc k_heap  )

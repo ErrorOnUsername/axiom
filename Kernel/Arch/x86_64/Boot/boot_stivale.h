@@ -1,8 +1,8 @@
 #pragma once
 
 #include <AXUtil/Types.h>
-#include <Kernel/Arch/x86_64/Boot/stivale2.h>
-#include <Kernel/Memory/BootloaderMemoryMap.h>
+#include <kernel/arch/x86_64/boot/stivale2.h>
+#include <kernel/memory/bootloader_memory_map.h>
 
 namespace Kernel {
 

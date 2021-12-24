@@ -26,6 +26,6 @@ struct BootloaderMemoryMap {
 	BootloaderMemoryMapEntry* entries;
 };
 
-const char* memory_map_type_as_string(uint32_t type);
+char const* memory_map_type_as_string(uint32_t type);
 
 }

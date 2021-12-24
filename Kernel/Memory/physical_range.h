@@ -1,7 +1,7 @@
 #pragma once
 
 #include <AXUtil/Types.h>
-#include <Kernel/Memory/PhysicalAddress.h>
+#include <kernel/memory/physical_address.h>
 
 namespace Kernel::Memory {
 
@@ -19,13 +19,13 @@ enum class PhysicalRangeType {
 
 struct PhysicalRange {
 	PhysicalRangeType type;
-	PhysicalAddress address;
+	PhysicalAddress start;
 	uint64_t size = 0;
 };
 
 struct ContiguousPhysicalRange {
-	uint64_t start;
-	uint64_t end;
+	PhysicalAddress start;
+	size_t size;
 };
 
 }

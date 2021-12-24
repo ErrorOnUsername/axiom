@@ -1,8 +1,8 @@
 #include <stdarg.h>
 
 #include <AXUtil/Types.h>
-#include <Kernel/k_debug.h>
-#include <Kernel/IO.h>
+#include <kernel/k_debug.h>
+#include <kernel/IO.h>
 
 namespace Kernel {
 

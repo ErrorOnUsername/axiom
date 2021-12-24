@@ -1,9 +1,9 @@
 #include "IDT.h"
 
 #include <AXUtil/Types.h>
-#include <Kernel/Arch/x86_64/GDT/GDT.h>
-#include <Kernel/Arch/x86_64/DescriptorTablePointer.h>
-#include <Kernel/k_debug.h>
+#include <kernel/arch/x86_64/GDT/GDT.h>
+#include <kernel/arch/x86_64/descriptor_table_pointer.h>
+#include <kernel/k_debug.h>
 
 namespace Kernel::IDT {
 

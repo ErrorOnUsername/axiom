@@ -2,8 +2,8 @@
 
 #include <AXUtil/Helpers.h>
 #include <AXUtil/Types.h>
-#include <Kernel/k_debug.h>
-#include <Kernel/Arch/x86_64/Boot/stivale2.h>
+#include <kernel/k_debug.h>
+#include <kernel/arch/x86_64/boot/stivale2.h>
 
 namespace Kernel {
 

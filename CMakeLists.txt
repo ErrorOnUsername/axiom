@@ -9,16 +9,16 @@ set( AXIOM_ARCH x86_64 )
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 add_custom_target( img
-	COMMAND make -C ../Vendor/limine
+	COMMAND make -C ../vendor/limine
 	COMMAND mkdir -p iso_root
-	COMMAND cp -v Kernel/Kernel ../limine.cfg ../Vendor/limine/limine.sys ../Vendor/limine/limine-cd.bin
-	              ../Vendor/limine/limine-eltorito-efi.bin iso_root
+	COMMAND cp -v kernel/kernel ../limine.cfg ../vendor/limine/limine.sys ../vendor/limine/limine-cd.bin
+	              ../vendor/limine/limine-eltorito-efi.bin iso_root
 	COMMAND xorriso -as mkisofs -b limine-cd.bin
 	                -no-emul-boot -boot-load-size 4 -boot-info-table
 	                --efi-boot limine-eltorito-efi.bin
 	                -efi-boot-part --efi-boot-image --protective-msdos-label
 					iso_root -o _qemu_img
-	COMMAND ./../Vendor/limine/limine-install _qemu_img
+	COMMAND ./../vendor/limine/limine-install _qemu_img
 	BYPRODUCTS _qemu_img
 	VERBATIM
 )
@@ -31,7 +31,7 @@ add_custom_target( run
 
 include_directories( . )
 
-set( TOOLCHAIN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Toolchain" )
+set( TOOLCHAIN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/toolchain" )
 set( TOOLCHAIN_BIN_PATH "${TOOLCHAIN_ROOT}/Local/bin" )
 set( TOOLCHAIN_BIN_PREFIX "${TOOLCHAIN_BIN_PATH}/${AXIOM_ARCH}-pc-elf" )
 
@@ -61,4 +61,4 @@ foreach( lang ASM C CXX OBJC OBJCXX )
 	endif()
 endforeach()
 
-add_subdirectory( Kernel )
+add_subdirectory( kernel )

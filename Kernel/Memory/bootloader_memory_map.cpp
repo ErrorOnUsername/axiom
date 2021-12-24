@@ -1,4 +1,4 @@
-#include "BootloaderMemoryMap.h"
+#include "bootloader_memory_map.h"
 
 namespace Kernel::Memory {
 
