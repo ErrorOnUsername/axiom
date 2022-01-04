@@ -1,20 +1,20 @@
 set( KERNEL_SOURCES
-	arch/x86_64/CPU.cpp
-	arch/x86_64/boot/boot_stivale.cpp
-	arch/x86_64/GDT/GDT.cpp
-	arch/x86_64/GDT/load_gdt.S
-	arch/x86_64/interrupts/interrupts.cpp
-	arch/x86_64/interrupts/interrupts.S
-	arch/x86_64/interrupts/IDT.cpp
-	memory/bootloader_memory_map.cpp
-	memory/memory_manager.cpp
-	std.cpp
-	k_start.cpp
-	k_debug.cpp
+	arch/amd64/cpu.cc
+	arch/amd64/boot/boot_stivale.cc
+	arch/amd64/gdt/gdt.cc
+	arch/amd64/gdt/load_gdt.S
+	arch/amd64/interrupts/interrupts.cc
+	arch/amd64/interrupts/interrupts.S
+	arch/amd64/interrupts/IDT.cc
+	memory/bootloader_memory_map.cc
+	memory/memory_manager.cc
+	std.cc
+	k_start.cc
+	k_debug.cc
 )
 
 set( KERNEL_HEAP_SOURCES
-	memory/heap/k_malloc.cpp
+	memory/heap/k_malloc.cc
 )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g0 -I -O2" )
