@@ -1,7 +1,7 @@
 #include "gdt.hh"
 
 #include <ax_util/types.hh>
-#include <Kernel/k_debug.hh>
+#include <kernel/k_debug.hh>
 
 namespace Kernel::GDT {
 

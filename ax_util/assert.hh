@@ -1,9 +1,9 @@
 #pragma once
 
 #include <ax_util/helpers.hh>
-#include <Kernel/Arch/CPU.h>
+#include <kernel/arch/cpu.hh>
 // FIXME: Think of a better way of doing this
-#include <Kernel/k_debug.h>
+#include <kernel/k_debug.hh>
 
 #define __HANDLE_ASSERT_FAILED_WITH_MESSAGE__(condition, msg...)                              \
 	Kernel::k_printf("[" __FILE__ ":" __STRINGIFY__(__LINE__) "] Assertion Failed: " msg); \

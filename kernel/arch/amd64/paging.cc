@@ -1,6 +1,6 @@
 #include "paging.hh"
 
-#include <ax_util/Helpers.hh>
+#include <ax_util/helpers.hh>
 #include <kernel/arch/amd64/asm_util.hh>
 
 namespace Kernel::Memory {

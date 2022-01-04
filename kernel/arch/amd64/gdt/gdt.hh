@@ -1,8 +1,8 @@
 #pragma once
 
-#include <AXUtil/Helpers.h>
-#include <AXUtil/Types.h>
-#include <kernel/arch/x86_64/descriptor_table_pointer.h>
+#include <ax_util/helpers.hh>
+#include <ax_util/types.hh>
+#include <kernel/arch/amd64/descriptor_table_pointer.hh>
 
 namespace Kernel::GDT {
 
