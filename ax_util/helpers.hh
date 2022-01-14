@@ -18,8 +18,9 @@
 #define SECTION(x) __attribute__((__section__(#x), used))
 
 #define PAGE_SIZE 0x1000
-#define ADDR_PAGE_ALIGN_UP(addr) addr + (PAGE_SIZE - (addr % PAGE_SIZE))
-#define ADDR_PAGE_ALIGN_DOWN(addr) addr - (addr % PAGE_SIZE)
+
+#define ALIGN_UP(value, align_to)   (value) + ((align_to) - ((value) % (align_to)) % (align_to))
+#define ALIGN_DOWN(value, align_to) (value) - ((value) % (align_to))
 
 #define MAKE_NONCOPYABLE(Class)             \
 	Class(Class const&) = delete;           \

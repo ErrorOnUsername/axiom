@@ -2,6 +2,7 @@
 
 #include <ax_util/assert.hh>
 #include <ax_util/bitmap.hh>
+#include <ax_util/helpers.hh>
 #include <ax_util/types.hh>
 
 namespace Kernel::Memory {
@@ -18,10 +19,7 @@ class Heap {
 	static size_t chunks_needed(size_t size)
 	{
 		// Round up the size to chunk boundaries so that we can fit all the data.
-		if(size % CHUNK_SIZE != 0)
-			return (size + (CHUNK_SIZE - (size % CHUNK_SIZE))) / CHUNK_SIZE;
-		else
-			return size / CHUNK_SIZE;
+		return ALIGN_UP(size, CHUNK_SIZE);
 	}
 
 	static AllocationHeader const* allocation_header_at_addr(void* addr)
@@ -33,7 +31,9 @@ public:
 		: m_heap_pool(heap_pool)
 		, m_pool_size(DATA_SIZE)
 		, m_bitmap(&m_raw_bitmap[0], TOTAL_CHUNKS)
-	{ }
+	{
+		m_bitmap.fill(0x00);
+	}
 
 	void* allocate(size_t bytes)
 	{
@@ -59,7 +59,7 @@ public:
 
 		// TODO: Scrub out the buffer before returning the pointer?
 		//       It could be good for security, but slow.
-		return (void*)((uint64_t)header + sizeof(AllocationHeader));
+		return (void*)((addr_t)header + sizeof(AllocationHeader));
 	}
 
 	void free(void* data)
@@ -70,9 +70,9 @@ public:
 		ASSERT((uint8_t*)alloc_header >= m_heap_pool && (uint8_t*)alloc_header < m_heap_pool + TOTAL_CHUNKS * CHUNK_SIZE);
 
 		size_t total_chunks = alloc_header->allocation_size_in_bytes / CHUNK_SIZE;
-		size_t start_chunk_index = ((uint64_t)alloc_header - (uint64_t)m_heap_pool) / CHUNK_SIZE;
+		size_t start_chunk_index = ((addr_t)alloc_header - (addr_t)m_heap_pool) / CHUNK_SIZE;
 
-		ASSERT(m_bitmap.verify(start_chunk_index));
+		ASSERT(m_bitmap.verify_occupied(start_chunk_index));
 		m_bitmap.set_range(start_chunk_index, total_chunks, false);
 
 		// TODO: Scrub out the buffer after it's freed?

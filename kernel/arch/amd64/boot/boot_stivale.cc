@@ -76,8 +76,8 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 		memory_map_entries[i] = memory_map_entry_from_stivale2_entry(memmap_entries[i]);
 
 	Memory::BootloaderMemoryMap memory_map = {
-		.length = memory_map_entry_count,
 		.entries = &memory_map_entries[0],
+		.length = memory_map_entry_count
 	};
 
 	k_init(memory_map);

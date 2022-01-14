@@ -25,7 +25,7 @@ enum class LogLevel {
 struct DebugFileLocation {
 	char const* filepath;
 	char const* function_name;
-	uint32_t line;
+	uint32_t    line;
 
 	char const* get_root_filename() const;
 };
@@ -33,6 +33,6 @@ struct DebugFileLocation {
 extern "C" int k_printf(char const* fmt, ...);
 extern "C" int k_vprintf(char const* fmt, va_list args);
 
-void klog_impl(LogLevel log_level, DebugFileLocation calling_file, char const* fmt, ...);
+void klog_impl(LogLevel, DebugFileLocation, char const* fmt, ...);
 
 }

@@ -16,14 +16,14 @@ enum MemoryRegionType : uint32_t {
 };
 
 struct BootloaderMemoryMapEntry {
-	uint64_t address;
+	addr_t   address;
 	uint64_t size;
 	uint32_t type;
 };
 
 struct BootloaderMemoryMap {
-	uint64_t length;
 	BootloaderMemoryMapEntry* entries;
+	uint64_t                  length;
 };
 
 char const* memory_map_type_as_string(uint32_t type);

@@ -1,12 +1,25 @@
 #include "memory_manager.hh"
 
+#include <ax_util/bitmap.hh>
 #include <ax_util/helpers.hh>
 #include <ax_util/list.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/physical_range.hh>
 #include <kernel/k_debug.hh>
 
+//
+// TODO:
+//   * Make a physical memory manager.
+//       - Use a bitmap of all used PhysicalPages.
+//       - Definitely re-design the bitmap class and make it better
+//         and more readable
+//   * Make a virtual memory manager.
+//
+
 namespace Kernel::Memory {
+
+static size_t     total_available_memory = 0;
+static AX::Bitmap available_pages_bitmap;
 
 static AX::List<PhysicalRange>           reported_physical_ranges;
 static AX::List<ContiguousPhysicalRange> contiguous_physical_ranges;
@@ -21,19 +34,19 @@ static void locate_reserved_physical_ranges()
 		current_range = reported_physical_ranges[i];
 
 		if(current_range.type != PhysicalRangeType::Reserved) {
-			if(contiguous_range.start.is_null())
+			if(!contiguous_range.start)
 				continue;
 
 			contiguous_reserved_physical_ranges.append(ContiguousPhysicalRange {
 				.start = contiguous_range.start,
-				.size  = current_range.start.addr - contiguous_range.start.addr
+				.size  = current_range.start - contiguous_range.start
 			});
 
 			contiguous_range.start = 0;
 			continue;
 		}
 
-		if(!contiguous_range.start.is_null())
+		if(contiguous_range.start)
 			continue;
 
 		contiguous_range.start = current_range.start;
@@ -42,17 +55,28 @@ static void locate_reserved_physical_ranges()
 	if(reported_physical_ranges.last().type != PhysicalRangeType::Reserved)
 		return;
 
-	if(contiguous_range.start.is_null())
+	if(!contiguous_range.start)
 		return;
 
 	contiguous_reserved_physical_ranges.append(ContiguousPhysicalRange {
 		.start = contiguous_range.start,
-		.size  = (reported_physical_ranges.last().start.addr - contiguous_range.start.addr) + reported_physical_ranges.last().size
+		.size  = (reported_physical_ranges.last().start - contiguous_range.start) + reported_physical_ranges.last().size
 	});
 }
 
-static void initialize_pages()
+static void initialize_physical_pages()
 {
+	// The total amount of memory is guarenteed to be evenly divisible by
+	// PAGE_SIZE by virtue of all the available sections being aligned on page
+	// boundaries.
+	size_t total_page_count = total_available_memory / PAGE_SIZE;
+
+	klogf(LogLevel::Info, "Total available memory: %us KiB"
+	    , total_available_memory / 1024);
+	klogf(LogLevel::Info, "Total physical pages needed: %us", total_page_count);
+
+	available_pages_bitmap.init(total_page_count);
+	available_pages_bitmap.fill(0x00);
 }
 
 static void parse_memory_map(BootloaderMemoryMap& memory_map)
@@ -160,12 +184,14 @@ static void parse_memory_map(BootloaderMemoryMap& memory_map)
 			continue;
 		}
 
+		total_available_memory += current_entry.size;
+
 		// Walk the pages in each Usable section to find all contiguous regions
 		for(uint64_t page_addr = current_entry.address;
 		             page_addr < (current_entry.address + current_entry.size);
 		             page_addr += PAGE_SIZE) {
 			if(!contiguous_physical_ranges.is_empty()
-			   && contiguous_physical_ranges.last().start.offset(contiguous_physical_ranges.last().size) == page_addr) {
+			   && contiguous_physical_ranges.last().start + contiguous_physical_ranges.last().size == page_addr) {
 				// If out list isn't empty, and the page we're looking at is the next sequential
 				// page after the last one we looked at, then we add a page to the size of the
 				// current contiguous range.
@@ -183,7 +209,7 @@ static void parse_memory_map(BootloaderMemoryMap& memory_map)
 
 	for(size_t i = 0; i < contiguous_physical_ranges.count; i++) {
 		klogf(LogLevel::Info, "[Usable] ContiguousPhysicalRange: { start: %xl, size: %xl }"
-		    , contiguous_physical_ranges[i].start.addr
+		    , contiguous_physical_ranges[i].start
 		    , contiguous_physical_ranges[i].size);
 	}
 
@@ -191,16 +217,15 @@ static void parse_memory_map(BootloaderMemoryMap& memory_map)
 
 	for(size_t i = 0; i < contiguous_reserved_physical_ranges.count; i++) {
 		klogf(LogLevel::Info, "[Reserved] ContiguousPhysicalRange: { start: %xl, size: %xl }"
-		    , contiguous_reserved_physical_ranges[i].start.addr
+		    , contiguous_reserved_physical_ranges[i].start
 		    , contiguous_reserved_physical_ranges[i].size);
 	}
-
-	initialize_pages();
 }
 
 void init_memory_management(BootloaderMemoryMap& memory_map)
 {
 	parse_memory_map(memory_map);
+	initialize_physical_pages();
 }
 
 }

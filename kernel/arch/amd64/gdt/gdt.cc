@@ -6,15 +6,15 @@
 namespace Kernel::GDT {
 
 GDT custom_gdt = {
-	{0, 0, 0, 0x00, 0x00, 0}, /* NULL */
+	{0, 0, 0, 0x00, 0x00, 0}, // NULL
 
-	/* Kernel Segments */
-	{0, 0, 0, 0x9a, 0xa0, 0}, /* CODE */
-	{0, 0, 0, 0x92, 0xa0, 0}, /* DATA */
+	// Kernel Segments
+	{0, 0, 0, 0x9a, 0xa0, 0}, // CODE
+	{0, 0, 0, 0x92, 0xa0, 0}, // DATA
 
-	/* Userspace Segments */
-	{0, 0, 0, 0xfa, 0xa0, 0}, /* CODE */
-	{0, 0, 0, 0xf2, 0xa0, 0}, /* DATA */
+	// Userspace Segments
+	{0, 0, 0, 0xfa, 0xa0, 0}, // CODE
+	{0, 0, 0, 0xf2, 0xa0, 0}, // DATA
 };
 
 void init_gdt()

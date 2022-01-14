@@ -112,9 +112,9 @@ static inline size_t pt_index(uint64_t addr)
 static_assert(sizeof(PTEntry) == sizeof(uint64_t));
 static_assert(sizeof(PTTable) == 0x1000);
 
+PML4Table* kernel_pml4();
+
 void init_virtual_memory();
 void switch_address_space(PML4Table*);
-
-PML4Table* kernel_pml4();
 
 }
