@@ -8,6 +8,7 @@ set( KERNEL_SOURCES
 	arch/amd64/interrupts/IDT.cc
 	memory/bootloader_memory_map.cc
 	memory/memory_manager.cc
+	memory/region.cc
 	std.cc
 	k_start.cc
 	k_debug.cc

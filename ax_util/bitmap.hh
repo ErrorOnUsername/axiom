@@ -96,6 +96,16 @@ struct Bitmap {
 		__builtin_memset((void*)raw_data, value, chunk_count / 8);
 	}
 
+	bool verify_range_occupied(size_t chunk_index, size_t length)
+	{
+		// FIXME: Do this intelligently! Not this stupid way.
+		for(size_t i = chunk_index; i < (chunk_index + length); i++) {
+			if(!verify_occupied(i))
+				return false;
+		}
+		return true;
+	}
+
 	inline bool verify_occupied(size_t chunk_index)
 	{
 		uint8_t chunk_sector        = raw_data[chunk_index / 8];

@@ -340,7 +340,7 @@ static char const* parse_log_level_prefix(LogLevel log_level)
 void klog_impl(LogLevel log_level, DebugFileLocation calling_file, char const* fmt, ...) {
 	char const* level_prefix = parse_log_level_prefix(log_level);
 
-	k_printf("[[1;36m %s:%u | %s(...) [0m] %s: "
+	k_printf("[[1;36m%s:%u | %s(...)[0m] %s: "
 	       , calling_file.get_root_filename(), calling_file.line
 	       , calling_file.function_name
 	       , level_prefix);

@@ -19,8 +19,8 @@
 
 #define PAGE_SIZE 0x1000
 
-#define ALIGN_UP(value, align_to)   (value) + ((align_to) - ((value) % (align_to)) % (align_to))
-#define ALIGN_DOWN(value, align_to) (value) - ((value) % (align_to))
+#define ALIGN_UP(value, align_to)   ((value) + ((align_to) - ((value) % (align_to)) % (align_to)))
+#define ALIGN_DOWN(value, align_to) ((value) - ((value) % (align_to)))
 
 #define MAKE_NONCOPYABLE(Class)             \
 	Class(Class const&) = delete;           \
