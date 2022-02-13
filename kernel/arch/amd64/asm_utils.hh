@@ -4,6 +4,6 @@
 
 namespace Kernel {
 
-extern "C" void load_cr3(uint64_t);
+void load_cr3(void* addr_space);
 
 };

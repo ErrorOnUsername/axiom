@@ -13,15 +13,14 @@ struct PML4Entry {
 	bool     accessed:       1;
 	int      ignored0:       6;
 	uint64_t physical_addr: 36;
-	int      ignored1:      15;
-	bool     exec_disabled:  1;
+	int      ignored1:      15; bool     exec_disabled:  1;
 } PACKED;
 
 struct PML4Table {
 	PML4Entry entries[512];
 } PACKED;
 
-static inline size_t pml4_index(uint64_t addr)
+static inline size_t pml4t_index(uint64_t addr)
 {
 	return (addr >> 39) & 0x1ff;
 }
@@ -45,10 +44,10 @@ struct PDPEntry {
 } PACKED;
 
 struct PDPTable {
-	PDPEntry entires[512];
+	PDPEntry entries[512];
 } PACKED;
 
-static inline size_t pdp_index(uint64_t addr)
+static inline size_t pdpt_index(uint64_t addr)
 {
 	return (addr >> 30) & 0x1ff;
 }
@@ -75,7 +74,7 @@ struct PDTable {
 	PDEntry entries[512];
 } PACKED;
 
-static inline size_t pd_index(uint64_t addr)
+static inline size_t pdt_index(uint64_t addr)
 {
 	return (addr >> 21) & 0x1ff;
 }
@@ -100,7 +99,7 @@ struct PTEntry {
 	bool     exec_disabled:   1;
 } PACKED;
 
-struct PTTable {
+struct PT {
 	PTEntry entries[512];
 } PACKED;
 
@@ -110,11 +109,16 @@ static inline size_t pt_index(uint64_t addr)
 }
 
 static_assert(sizeof(PTEntry) == sizeof(uint64_t));
-static_assert(sizeof(PTTable) == 0x1000);
+static_assert(sizeof(PT) == 0x1000);
 
 PML4Table* kernel_pml4();
 
-void init_virtual_memory();
 void switch_address_space(PML4Table*);
+
+void init_virtual_memory();
+void enable_virtual_memory();
+
+bool      virtual_is_present(PML4Table*, uintptr_t vaddr);
+uintptr_t virtual_to_physical(PML4Table*, uintptr_t vaddr);
 
 }

@@ -53,7 +53,7 @@ Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_m
 	};
 }
 
-extern "C" void k_init(Memory::BootloaderMemoryMap&);
+extern "C" void k_init(Memory::BootloaderMemoryMap&, addr_t framebuffer_addr, uint16_t framebuffer_width, uint16_t framebuffer_height);
 
 extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 {
@@ -80,7 +80,7 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 		.length = memory_map_entry_count
 	};
 
-	k_init(memory_map);
+	k_init(memory_map, framebuffer_tag->framebuffer_addr, framebuffer_tag->framebuffer_width, framebuffer_tag->framebuffer_height);
 }
 
 }

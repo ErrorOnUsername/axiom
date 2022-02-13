@@ -4,6 +4,7 @@
 #include <ax_util/helpers.hh>
 #include <ax_util/list.hh>
 #include <ax_util/lock.hh>
+#include <kernel/arch/amd64/paging.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/region.hh>
 #include <kernel/k_debug.hh>
@@ -25,6 +26,7 @@ void init_memory_management(BootloaderMemoryMap& memory_map)
 {
 	parse_memory_map(memory_map);
 	initialize_physical_memory_management();
+	init_virtual_memory();
 }
 
 MemoryRange allocate_physical_pages(size_t page_count)

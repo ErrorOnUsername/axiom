@@ -13,6 +13,7 @@ using int32_t = __INT32_TYPE__;
 using int64_t = __INT64_TYPE__;
 
 using size_t    = __SIZE_TYPE__;
+using uintptr_t = __UINTPTR_TYPE__;
 using ptrdiff_t = __PTRDIFF_TYPE__;
 
 // BUG: This doesn't work for anything other than 64-bit
