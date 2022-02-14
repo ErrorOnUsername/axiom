@@ -39,10 +39,11 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	TextConsole console((uint32_t*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
-	char c = banner[0];
+	char const* entry_msg = "Welcome to Axiom V0.1!";
+	char        c         = entry_msg[0];
 	for(size_t i = 0; c != 0;) {
 		console.put_char(c);
-		c = banner[++i];
+		c = entry_msg[++i];
 	}
 
 	for(;;);
