@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ax_util/bitmap.hh>
+#include <ax_util/helpers.hh>
 #include <ax_util/lock.hh>
 #include <ax_util/types.hh>
 
@@ -9,6 +10,8 @@ namespace Kernel::Memory {
 struct MemoryRange {
 	addr_t start = 0;
 	size_t size  = 0;
+
+	inline size_t page_count() const { return ALIGN_UP(size, PAGE_SIZE) / PAGE_SIZE; }
 };
 
 struct PhysicalMemoryRegion {

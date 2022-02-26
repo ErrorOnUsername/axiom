@@ -1,8 +1,19 @@
-#include "debug_text_console.hh"
+#include "early_console.hh"
 
 #include <kernel/k_debug.hh>
 
-namespace Kernel {
+namespace Kernel::EarlyConsole {
+
+static constexpr uint16_t TAB_WIDTH        = 4;
+static constexpr uint16_t CHARACTER_WIDTH  = 8;
+static constexpr uint16_t CHARACTER_HEIGHT = 16;
+
+static uint16_t row    = 0;
+static uint16_t column = 0;
+
+static uint32_t* framebuffer        = nullptr;
+static uint16_t  framebuffer_width  = 0;
+static uint16_t  framebuffer_height = 0;
 
 static uint8_t font[] = {
 	0b00000000, // --------
@@ -1604,15 +1615,14 @@ static uint8_t font[] = {
 	0b00000000, // --------
 };
 
-TextConsole::TextConsole(uint32_t* framebuffer_raw, uint16_t width, uint16_t height)
-	: framebuffer(framebuffer_raw)
-	, framebuffer_width(width)
-	, framebuffer_height(height)
-	, row(0)
-	, column(0)
-{ }
+void initialize_early_console(uint32_t* fb_addr, uint16_t fb_width, uint16_t fb_height)
+{
+	framebuffer        = fb_addr;
+	framebuffer_width  = fb_width;
+	framebuffer_height = fb_height;
+}
 
-void TextConsole::put_char(char c)
+void put_char(char c)
 {
 	switch(c) {
 		case ' ':
@@ -1633,7 +1643,7 @@ void TextConsole::put_char(char c)
 	}
 }
 
-void TextConsole::draw_char(char c)
+void draw_char(char c)
 {
 	for(uint8_t i = 0; i < CHARACTER_HEIGHT; i++) {
 		for(uint8_t j = 0; j < CHARACTER_WIDTH; j++) {

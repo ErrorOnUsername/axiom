@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ax_util/helpers.hh>
+#include <ax_util/result.hh>
+#include <kernel/memory/region.hh>
 
 namespace Kernel::Memory {
 
@@ -120,5 +122,9 @@ void enable_virtual_memory();
 
 bool      virtual_is_present(PML4Table*, uintptr_t vaddr);
 uintptr_t virtual_to_physical(PML4Table*, uintptr_t vaddr);
+
+AX::Result  virtual_map_range(PML4Table*, MemoryRange const&, uintptr_t vaddr, bool is_user_region);
+MemoryRange virtual_alloc(PML4Table*, MemoryRange const&, bool is_user_region);
+void        virtual_free(PML4Table*, MemoryRange&);
 
 }

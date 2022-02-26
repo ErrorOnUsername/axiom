@@ -6,7 +6,7 @@
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/memory_manager.hh>
 #include <kernel/memory/heap/k_malloc.hh>
-#include <kernel/temporary/debug_text_console.hh>
+#include <kernel/system/early_console/early_console.hh>
 
 namespace Kernel {
 
@@ -37,12 +37,12 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	k_printf("%s\n", banner);
 
-	TextConsole console((uint32_t*)framebuffer_addr, framebuffer_width, framebuffer_height);
+	EarlyConsole::initialize_early_console((uint32_t*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
 	char const* entry_msg = "Welcome to Axiom V0.1!";
 	char        c         = entry_msg[0];
 	for(size_t i = 0; c != 0;) {
-		console.put_char(c);
+		EarlyConsole::put_char(c);
 		c = entry_msg[++i];
 	}
 
