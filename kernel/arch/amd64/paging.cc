@@ -181,11 +181,14 @@ AX::Result virtual_map_range(PML4Table* pml4t, MemoryRange const& range, uintptr
 
 MemoryRange virtual_allocate(PML4Table* pml4t, MemoryRange const& physical_range, AllocationFlags flags)
 {
-	uintptr_t vaddr        = 0;
-	size_t    current_size = 0;
+	uintptr_t vaddr          = 0;
+	size_t    current_size   = 0;
+	bool      is_user_memory = flags & USER_MEMORY;
 
-	// FIXME: Think of what should go here
-	for(size_t i = 0; i < 0; i++) {
+	for(size_t i = ((is_user_memory) ? 1 : (KERNEL_VIRTUAL_START / PAGE_SIZE));
+	           i < ((is_user_memory) ? KERNEL_VIRTUAL_START : 0xffffffffffffffff);
+	           i++)
+	{
 		uintptr_t current_addr = i * PAGE_SIZE;
 
 		if(!virtual_is_present(pml4t, vaddr)) {

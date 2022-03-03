@@ -13,9 +13,10 @@ set( KERNEL_SOURCES
 	memory/physical.cc
 	memory/region.cc
 	system/early_console/early_console.cc
-	std.cc
 	k_start.cc
 	k_debug.cc
+	panic.cc
+	std.cc
 )
 
 set( KERNEL_HEAP_SOURCES
