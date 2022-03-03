@@ -13,8 +13,8 @@ void init_memory_management(BootloaderMemoryMap&);
 AX::Result memory_map(PML4Table* address_space, MemoryRange& virtual_range, AllocationFlags);
 AX::Result memory_map_indentity(PML4Table* address_space, MemoryRange& physical_range, AllocationFlags);
 
-AX::Result memory_allocate(uintptr_t* out_addr, PML4Table* address_space, size_t size, AllocationFlags);
-AX::Result memory_allocate_identity(uintptr_t* out_addr, PML4Table* address_space, size_t size, AllocationFlags);
+MemoryRange memory_allocate(PML4Table* address_space, size_t size, AllocationFlags);
+MemoryRange memory_allocate_page_identity(PML4Table* address_space, AllocationFlags);
 
 void memory_free(PML4Table* address_space, MemoryRange& virtual_range);
 

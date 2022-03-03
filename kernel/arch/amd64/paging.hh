@@ -2,6 +2,7 @@
 
 #include <ax_util/helpers.hh>
 #include <ax_util/result.hh>
+#include <kernel/memory/memory.hh>
 #include <kernel/memory/region.hh>
 
 namespace Kernel::Memory {
@@ -113,7 +114,7 @@ static inline size_t pt_index(uint64_t addr)
 static_assert(sizeof(PTEntry) == sizeof(uint64_t));
 static_assert(sizeof(PT) == 0x1000);
 
-PML4Table* kernel_pml4();
+PML4Table* kernel_address_space();
 
 void switch_address_space(PML4Table*);
 
@@ -123,8 +124,8 @@ void enable_virtual_memory();
 bool      virtual_is_present(PML4Table*, uintptr_t vaddr);
 uintptr_t virtual_to_physical(PML4Table*, uintptr_t vaddr);
 
-AX::Result  virtual_map_range(PML4Table*, MemoryRange const&, uintptr_t vaddr, bool is_user_region);
-MemoryRange virtual_alloc(PML4Table*, MemoryRange const&, bool is_user_region);
+AX::Result  virtual_map_range(PML4Table*, MemoryRange const&, uintptr_t vaddr, AllocationFlags);
+MemoryRange virtual_allocate(PML4Table*, MemoryRange const&, AllocationFlags);
 void        virtual_free(PML4Table*, MemoryRange&);
 
 }

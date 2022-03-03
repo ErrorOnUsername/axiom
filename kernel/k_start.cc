@@ -37,6 +37,8 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	k_printf("%s\n", banner);
 
+	asm("int $0x0e");
+
 	EarlyConsole::initialize_early_console((uint32_t*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
 	char const* entry_msg = "Welcome to Axiom V0.1!";

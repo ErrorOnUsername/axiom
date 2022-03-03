@@ -3,10 +3,13 @@
 #include <ax_util/bitmap.hh>
 #include <ax_util/list.hh>
 #include <kernel/k_debug.hh>
+#include <kernel/panic.hh>
 #include <kernel/memory/region.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 
 namespace Kernel::Memory {
+
+static size_t highest_page = 0;
 
 static AX::List<PhysicalMemoryRegion> usable_contiguous_ranges;
 static AX::Lock                       allocator_lock;
@@ -21,11 +24,41 @@ void init_physical_memory_manager(BootloaderMemoryMap& memory_map)
 	initialize_physical_memory_management();
 }
 
+size_t physical_highest_page()
+{
+	return highest_page;
+}
+
 void physical_set_range_used(MemoryRange& physical_range)
-{ }
+{
+	for(size_t i = 0; i < usable_contiguous_ranges.count; i++) {
+		PhysicalMemoryRegion& region = usable_contiguous_ranges[i];
+		if(region.is_range_in_region(physical_range)) {
+			region.set_range_used(physical_range, true);
+		}
+	}
+}
 
 void physical_set_range_free(MemoryRange& physical_range)
-{ }
+{
+	for(size_t i = 0; i < usable_contiguous_ranges.count; i++) {
+		PhysicalMemoryRegion& region = usable_contiguous_ranges[i];
+		if(region.is_range_in_region(physical_range)) {
+			region.set_range_used(physical_range, false);
+		}
+	}
+}
+
+bool physical_is_range_used(MemoryRange& physical_range)
+{
+	for(size_t i = 0; i < usable_contiguous_ranges.count; i++) {
+		PhysicalMemoryRegion& region = usable_contiguous_ranges[i];
+		if(physical_range.start >= region.start && (physical_range.start + physical_range.size) <= (region.start + region.size)) {
+			return region.is_range_used(physical_range);
+		}
+	}
+	return false;
+}
 
 MemoryRange physical_allocate_pages(size_t page_count)
 {
@@ -37,8 +70,7 @@ MemoryRange physical_allocate_pages(size_t page_count)
 			return region.allocate_physical_pages(page_count);
 	}
 
-	ASSERT_MSG(false, "OOM! Ran out of physical memory!");
-
+	panic("OOM! Ran out of physical memory!");
 	return MemoryRange { 0, 0 };
 }
 
@@ -99,6 +131,10 @@ static void parse_memory_map(BootloaderMemoryMap const& memory_map)
 			    , PAGE_SIZE);
 			continue;
 		}
+
+		size_t page_index = ((current_entry.address + current_entry.size) - PAGE_SIZE) / PAGE_SIZE;
+		if(page_index > highest_page)
+			highest_page = page_index;
 
 		// Walk the pages in each Usable section to find all contiguous regions
 		for(uint64_t page_addr = current_entry.address;

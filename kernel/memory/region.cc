@@ -18,9 +18,14 @@ size_t PhysicalMemoryRegion::free_pages() const
 	return page_count() - allocated_pages;
 }
 
-bool PhysicalMemoryRegion::is_addr_in_range(addr_t addr) const
+bool PhysicalMemoryRegion::is_addr_in_region(addr_t addr) const
 {
 	return ((addr >= start) && (addr < (start + size)));
+}
+
+bool PhysicalMemoryRegion::is_range_in_region(MemoryRange const& range)
+{
+	return (range.start >= start) && ((range.start + range.size) <= (start + size));
 }
 
 void PhysicalMemoryRegion::initialize_physical_memory_management()
@@ -33,6 +38,15 @@ void PhysicalMemoryRegion::initialize_physical_memory_management()
 	                    , start + (size - 1)
 	                    , page_count()
 	                    , size / KiB);
+}
+
+void PhysicalMemoryRegion::set_range_used(MemoryRange& range, bool used)
+{
+	ASSERT(range.is_page_aligned());
+
+	size_t index      = (range.start - start) / PAGE_SIZE;
+	size_t page_count = range.page_count();
+	physical_page_bitmap.set_range(index, page_count, used);
 }
 
 MemoryRange PhysicalMemoryRegion::allocate_physical_pages(size_t page_count)
@@ -48,19 +62,18 @@ MemoryRange PhysicalMemoryRegion::allocate_physical_pages(size_t page_count)
 		ASSERT(false);
 	}
 
-	physical_page_bitmap.set_range(index, page_count, true);
-
-	MemoryRange region {
+	MemoryRange range {
 		.start = start + (index * PAGE_SIZE),
 		.size  = page_count * PAGE_SIZE
 	};
 
-	return region;
+	set_range_used(range, true);
+	return range;
 }
 
 void PhysicalMemoryRegion::free_physical_memory_range(MemoryRange& range)
 {
-	if(!is_addr_in_range(range.start))
+	if(!is_addr_in_region(range.start))
 		return;
 
 	size_t page_count = range.size / PAGE_SIZE;
@@ -71,6 +84,14 @@ void PhysicalMemoryRegion::free_physical_memory_range(MemoryRange& range)
 	physical_page_bitmap.set_range(index, page_count, false);
 	range.start = 0;
 	range.size  = 0;
+}
+
+bool PhysicalMemoryRegion::is_range_used(MemoryRange const& range)
+{
+	ASSERT(range.is_page_aligned());
+	ASSERT(is_range_in_region(range));
+
+	return physical_page_bitmap.verify_range_occupied((range.start - start) / PAGE_SIZE, range.page_count());
 }
 
 }
