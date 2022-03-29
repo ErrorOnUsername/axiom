@@ -1,6 +1,7 @@
 #include "paging.hh"
 
 #include <ax_util/helpers.hh>
+#include <kernel/memory/memory.hh>
 #include <kernel/memory/memory_manager.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/panic.hh>
@@ -10,19 +11,19 @@ extern "C" void invalidate_tlb();
 
 namespace Kernel::Memory {
 
-ALIGN(PAGE_SIZE) PML4Table kernel_pml4t   = { };
-ALIGN(PAGE_SIZE) PDPTable  kernel_pdpt    = { };
-ALIGN(PAGE_SIZE) PDTable   kernel_pdt     = { };
-ALIGN(PAGE_SIZE) PT        kernel_pt[512] = { };
+ALIGN(PAGE_SIZE) PML4T kernel_pml4t   = { };
+ALIGN(PAGE_SIZE) PDPT  kernel_pdpt    = { };
+ALIGN(PAGE_SIZE) PDT   kernel_pdt     = { };
+ALIGN(PAGE_SIZE) PT    kernel_pt[512] = { };
 
-PML4Table* kernel_address_space()
+PML4T* kernel_address_space()
 {
 	return &kernel_pml4t;
 }
 
-void switch_address_space(PML4Table* pml4)
+void switch_address_space(addr_t addr_space_physical_address)
 {
-	load_cr3(pml4);
+	asm volatile("mov %%rax, %%cr3" :: "a"(addr_space_physical_address) : "memory");
 }
 
 void init_virtual_memory()
@@ -32,14 +33,14 @@ void init_virtual_memory()
 	pml4t_entry->user          = false;
 	pml4t_entry->read_write    = true;
 	pml4t_entry->present       = true;
-	pml4t_entry->physical_addr = (addr_t)&kernel_pdpt / PAGE_SIZE;
+	pml4t_entry->physical_addr = ((addr_t)&kernel_pdpt - KERNEL_VIRTUAL_START) >> 12;
 
 	auto* pdpt_entry = &kernel_pdpt.entries[0];
 
 	pdpt_entry->user          = false;
 	pdpt_entry->read_write    = true;
 	pdpt_entry->present       = true;
-	pdpt_entry->physical_addr = (addr_t)&kernel_pdt / PAGE_SIZE;
+	pdpt_entry->physical_addr = ((addr_t)&kernel_pdt - KERNEL_VIRTUAL_START) >> 12;
 
 	for(size_t i = 0; i < 512; i++) {
 		auto* pdt_entry = &kernel_pdt.entries[i];
@@ -47,19 +48,19 @@ void init_virtual_memory()
 		pdt_entry->user          = false;
 		pdt_entry->read_write    = true;
 		pdt_entry->present       = true;
-		pdt_entry->physical_addr = (addr_t)&kernel_pt[i] / PAGE_SIZE;
+		pdt_entry->physical_addr = ((addr_t)&kernel_pt[i] - KERNEL_VIRTUAL_START) >> 12;
 	}
 }
 
 void enable_virtual_memory()
 {
-	switch_address_space(kernel_address_space());
+	switch_address_space((addr_t)kernel_address_space() - KERNEL_VIRTUAL_START);
 }
 
-PML4Table* create_address_space()
+PML4T* create_address_space()
 {
-	auto* pml4t = (PML4Table*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
-	auto* pdpt  = (PDPTable*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
+	auto* pml4t = (PML4T*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
+	auto* pdpt  = (PDPT*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
 
 	auto* pml4t_entry = &pml4t->entries[0];
 	pml4t_entry->user          = true;
@@ -67,7 +68,7 @@ PML4Table* create_address_space()
 	pml4t_entry->present       = true;
 	pml4t_entry->physical_addr = (addr_t)pdpt / PAGE_SIZE;
 
-	auto* pdt  = (PDTable*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
+	auto* pdt  = (PDT*)memory_allocate_page_identity(kernel_address_space(), CLEAR_MEMORY).start;
 
 	auto* pdpt_entry = &pdpt->entries[0];
 	pdpt_entry->user          = true;
@@ -87,83 +88,156 @@ PML4Table* create_address_space()
 	return pml4t;
 }
 
-bool virtual_is_present(PML4Table* pml4t, uintptr_t vaddr)
+bool virtual_is_present(PML4T* pml4t, uintptr_t vaddr)
 {
 	auto* pml4t_entry = &pml4t->entries[pml4t_index(vaddr)];
 	if(!pml4t_entry->present) return false;
 
-	auto* pdpt       = (PDPTable*)(pml4t_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	////////// Page Directory Pointer Table //////////
+	//////////////////////////////////////////////////
+
+	addr_t pdpt_addr = pml4t_entry->physical_addr << 12;
+	if(pdpt_addr == kernel_to_physical((addr_t)&kernel_pdpt))
+		pdpt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pdpt = (PDPT*)pdpt_addr;
 	auto* pdpt_entry = &pdpt->entries[pdpt_index(vaddr)];
 	if(!pdpt_entry->present) return false;
 
-	auto* pdt       = (PDTable*)(pdpt_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	////////////// Page Directory Table //////////////
+	//////////////////////////////////////////////////
+
+	addr_t pdt_addr = pdpt_entry->physical_addr << 12;
+	if(pdt_addr == kernel_to_physical((addr_t)&kernel_pdt))
+		pdt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pdt       = (PDT*)pdt_addr;
 	auto* pdt_entry = &pdt->entries[pdt_index(vaddr)];
 	if(!pdt_entry->present) return false;
 
-	auto* pt       = (PT*)(pdt_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	/////////////////// Page Table ///////////////////
+	//////////////////////////////////////////////////
+
+	addr_t pt_addr = pdt_entry->physical_addr << 12;
+	if((pt_addr >= kernel_to_physical((addr_t)&kernel_pt[0])) && (pt_addr <= kernel_to_physical((addr_t)&kernel_pt[511])))
+		pt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pt       = (PT*)pt_addr;
 	auto* pt_entry = &pt->entries[pt_index(vaddr)];
+
 	return pt_entry->present;
 }
 
-uintptr_t virtual_to_physical(PML4Table* pml4t, uintptr_t vaddr)
+uintptr_t virtual_to_physical(PML4T* pml4t, uintptr_t vaddr)
 {
 	auto* pml4t_entry = &pml4t->entries[pml4t_index(vaddr)];
 	if(!pml4t_entry->present) return 0;
 
-	auto* pdpt       = (PDPTable*)(pml4t_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	////////// Page Directory Pointer Table //////////
+	//////////////////////////////////////////////////
+
+	addr_t pdpt_addr = pml4t_entry->physical_addr << 12;
+	if(pdpt_addr == kernel_to_physical((addr_t)&kernel_pdpt))
+		pdpt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pdpt = (PDPT*)pdpt_addr;
 	auto* pdpt_entry = &pdpt->entries[pdpt_index(vaddr)];
 	if(!pdpt_entry->present) return 0;
 
-	auto* pdt       = (PDTable*)(pdpt_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	////////////// Page Directory Table //////////////
+	//////////////////////////////////////////////////
+
+	addr_t pdt_addr = pdpt_entry->physical_addr << 12;
+	if(pdt_addr == kernel_to_physical((addr_t)&kernel_pdt))
+		pdt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pdt       = (PDT*)pdt_addr;
 	auto* pdt_entry = &pdt->entries[pdt_index(vaddr)];
 	if(!pdt_entry->present) return 0;
 
-	auto* pt       = (PT*)(pdt_entry->physical_addr * PAGE_SIZE);
+	//////////////////////////////////////////////////
+	/////////////////// Page Table ///////////////////
+	//////////////////////////////////////////////////
+
+	addr_t pt_addr = pdt_entry->physical_addr << 12;
+	if((pt_addr >= kernel_to_physical((addr_t)&kernel_pt[0])) && (pt_addr <= kernel_to_physical((addr_t)&kernel_pt[511])))
+		pt_addr += KERNEL_VIRTUAL_START;
+
+	auto* pt       = (PT*)pt_addr;
 	auto* pt_entry = &pt->entries[pt_index(vaddr)];
 	if(!pt_entry->present) return 0;
 
-	return (pt_entry->physical_addr * PAGE_SIZE) + (vaddr & 0xfff);
+	// We add vaddr & 0xfff so we maintain the offset into the page
+	return (pt_entry->physical_addr << 12) + (vaddr & 0xfff);
 }
 
-AX::Result virtual_map_range(PML4Table* pml4t, MemoryRange const& range, uintptr_t vaddr, AllocationFlags flags)
+AX::Result virtual_map_range(PML4T* pml4t, MemoryRange const& range, uintptr_t vaddr, AllocationFlags flags)
 {
 	for(size_t i = 0; i < range.page_count(); i++) {
 		addr_t addr = vaddr + i * PAGE_SIZE;
 
 		auto* pml4t_entry = &pml4t->entries[pml4t_index(addr)];
 
-		auto* pdpt = (PDPTable*)(pml4t_entry->physical_addr * PAGE_SIZE);
+		//////////////////////////////////////////////////
+		////////// Page Directory Pointer Table //////////
+		//////////////////////////////////////////////////
+		addr_t pdpt_addr = pml4t_entry->physical_addr << 12;
+		if(pdpt_addr == kernel_to_physical((addr_t)&kernel_pdpt))
+			pdpt_addr += KERNEL_VIRTUAL_START;
+
+		auto* pdpt = (PDPT*)pdpt_addr;
 		if(!pml4t_entry->present) {
-			pdpt = (PDPTable*)memory_allocate_page_identity(pml4t, CLEAR_MEMORY).start;
+			pdpt = (PDPT*)memory_allocate_page_identity(pml4t, CLEAR_MEMORY).start;
 
 			pml4t_entry->present       = true;
 			pml4t_entry->read_write    = true;
 			pml4t_entry->user          = true;
-			pml4t_entry->physical_addr = (addr_t)pdpt / PAGE_SIZE;
+			pml4t_entry->physical_addr = (addr_t)pdpt >> 12;
 		}
 
 		auto* pdpt_entry = &pdpt->entries[pdpt_index(addr)];
 
-		auto* pdt = (PDTable*)(pdpt_entry->physical_addr * PAGE_SIZE);
+		//////////////////////////////////////////////////
+		////////////// Page Directory Table //////////////
+		//////////////////////////////////////////////////
+
+		addr_t pdt_addr = pdpt_entry->physical_addr << 12;
+		if(pdt_addr == kernel_to_physical((addr_t)&kernel_pdt))
+			pdt_addr += KERNEL_VIRTUAL_START;
+
+		auto* pdt = (PDT*)pdt_addr;
 		if(!pdpt_entry->present) {
-			pdt = (PDTable*)memory_allocate_page_identity(pml4t, CLEAR_MEMORY).start;
+			pdt = (PDT*)memory_allocate_page_identity(pml4t, CLEAR_MEMORY).start;
 
 			pdpt_entry->present       = true;
 			pdpt_entry->read_write    = true;
 			pdpt_entry->user          = true;
-			pdpt_entry->physical_addr = (addr_t)pdt / PAGE_SIZE;
+			pdpt_entry->physical_addr = (addr_t)pdt >> 12;
 		}
 
 		auto* pdt_entry = &pdt->entries[pdt_index(addr)];
 
-		auto* pt = (PT*)(pdt_entry->physical_addr * PAGE_SIZE);
-		if(pdt_entry->present) {
+		//////////////////////////////////////////////////
+		/////////////////// Page Table ///////////////////
+		//////////////////////////////////////////////////
+
+		addr_t pt_addr = pdt_entry->physical_addr << 12;
+		if((pt_addr >= kernel_to_physical((addr_t)&kernel_pt[0])) && (pt_addr <= kernel_to_physical((addr_t)&kernel_pt[511])))
+			pt_addr += KERNEL_VIRTUAL_START;
+
+		auto* pt = (PT*)pt_addr;
+		if(!pdt_entry->present) {
 			pt = (PT*)memory_allocate_page_identity(pml4t, CLEAR_MEMORY).start;
 
 			pdt_entry->present       = true;
 			pdt_entry->read_write    = true;
 			pdt_entry->user          = true;
-			pdt_entry->physical_addr = (addr_t)pt / PAGE_SIZE;
+			pdt_entry->physical_addr = (addr_t)pt >> 12;
 		}
 
 		auto* pt_entry = &pt->entries[pt_index(addr)];
@@ -171,7 +245,8 @@ AX::Result virtual_map_range(PML4Table* pml4t, MemoryRange const& range, uintptr
 		pt_entry->present       = true;
 		pt_entry->read_write    = true;
 		pt_entry->user          = flags & USER_MEMORY;
-		pt_entry->physical_addr = (range.start + i * PAGE_SIZE) / PAGE_SIZE;
+		pt_entry->physical_addr = (range.start + i * PAGE_SIZE) >> 12;
+
 	}
 
 	invalidate_tlb();
@@ -179,7 +254,7 @@ AX::Result virtual_map_range(PML4Table* pml4t, MemoryRange const& range, uintptr
 	return AX::Result::Success;
 }
 
-MemoryRange virtual_allocate(PML4Table* pml4t, MemoryRange const& physical_range, AllocationFlags flags)
+MemoryRange virtual_allocate(PML4T* pml4t, MemoryRange const& physical_range, AllocationFlags flags)
 {
 	uintptr_t vaddr          = 0;
 	size_t    current_size   = 0;
@@ -212,23 +287,25 @@ MemoryRange virtual_allocate(PML4Table* pml4t, MemoryRange const& physical_range
 	return MemoryRange { 0, 0 };
 }
 
-void virtual_free(PML4Table* pml4t, MemoryRange& virtual_range)
+void virtual_free(PML4T* pml4t, MemoryRange& virtual_range)
 {
+	bool is_kernel_addr_space = (addr_t)pml4t >= KERNEL_VIRTUAL_START;
+
 	for(size_t i = 0; i < virtual_range.page_count(); i++) {
 		addr_t addr = virtual_range.start + i * PAGE_SIZE;
 
 		auto* pml4t_entry = &pml4t->entries[pml4t_index(addr)];
 		if(!pml4t_entry->present) continue;
 
-		auto* pdpt       = (PDPTable*)(pml4t_entry->physical_addr * PAGE_SIZE);
+		auto* pdpt       = (PDPT*)((pml4t_entry->physical_addr << 12) + ((is_kernel_addr_space) ? 0 : KERNEL_VIRTUAL_START));
 		auto* pdpt_entry = &pdpt->entries[pdpt_index(addr)];
 		if(!pdpt_entry->present) continue;
 
-		auto* pdt       = (PDTable*)(pdpt_entry->physical_addr * PAGE_SIZE);
+		auto* pdt       = (PDT*)((pdpt_entry->physical_addr << 12) + ((is_kernel_addr_space) ? 0 : KERNEL_VIRTUAL_START));
 		auto* pdt_entry = &pdt->entries[pdt_index(addr)];
 		if(!pdt_entry->present) continue;
 
-		auto* pt       = (PT*)(pdt_entry->physical_addr * PAGE_SIZE);
+		auto* pt       = (PT*)((pdpt_entry->physical_addr << 12) + ((is_kernel_addr_space) ? 0 : KERNEL_VIRTUAL_START));
 		auto* pt_entry = &pt->entries[pt_index(addr)];
 
 		*pt_entry = { };

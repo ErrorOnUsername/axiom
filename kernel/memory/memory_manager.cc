@@ -9,17 +9,31 @@
 #include <kernel/memory/physical.hh>
 #include <kernel/memory/region.hh>
 #include <kernel/k_debug.hh>
+#include <kernel/panic.hh>
 #include <kernel/std.hh>
 
 namespace Kernel::Memory {
 
-void init_memory_management(BootloaderMemoryMap& memory_map)
+static MemoryRange kernel_physical_range(BootloaderMemoryMap&);
+static MemoryRange framebuffer_physical_range(BootloaderMemoryMap&);
+
+void init_memory_management(BootloaderMemoryMap& memmap)
 {
-	init_physical_memory_manager(memory_map);
+	init_physical_memory_manager(memmap);
 	init_virtual_memory();
+
+	MemoryRange kernel_range = kernel_physical_range(memmap);
+	MemoryRange fbuff_range  = framebuffer_physical_range(memmap);
+	virtual_map_range(kernel_address_space(), kernel_range, kernel_range.start + KERNEL_VIRTUAL_START, MEMORY_NONE);
+	virtual_map_range(kernel_address_space(), fbuff_range,  fbuff_range.start  + IO_VIRTUAL_START,     MEMORY_NONE);
+
+	MemoryRange zero_page = { 0, PAGE_SIZE };
+	virtual_free(kernel_address_space(), zero_page);
+
+	enable_virtual_memory();
 }
 
-AX::Result memory_map(PML4Table* address_space, MemoryRange& virtual_range, AllocationFlags flags)
+AX::Result memory_map(PML4T* address_space, MemoryRange& virtual_range, AllocationFlags flags)
 {
 	ASSERT(virtual_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
@@ -41,7 +55,7 @@ AX::Result memory_map(PML4Table* address_space, MemoryRange& virtual_range, Allo
 	return AX::Result::Success;
 }
 
-AX::Result memory_map_indentity(PML4Table* address_space, MemoryRange& physical_range, AllocationFlags flags)
+AX::Result memory_map_indentity(PML4T* address_space, MemoryRange& physical_range, AllocationFlags flags)
 {
 	ASSERT(physical_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
@@ -55,7 +69,7 @@ AX::Result memory_map_indentity(PML4Table* address_space, MemoryRange& physical_
 	return AX::Result::Success;
 }
 
-MemoryRange memory_allocate(PML4Table* address_space, size_t size, AllocationFlags flags)
+MemoryRange memory_allocate(PML4T* address_space, size_t size, AllocationFlags flags)
 {
 	ASSERT(size % PAGE_SIZE == 0);
 	ScopeInterruptDisabler interrupt_disabler;
@@ -76,7 +90,7 @@ MemoryRange memory_allocate(PML4Table* address_space, size_t size, AllocationFla
 	return virtual_range;
 }
 
-MemoryRange memory_allocate_page_identity(PML4Table* address_space, AllocationFlags flags)
+MemoryRange memory_allocate_page_identity(PML4T* address_space, AllocationFlags flags)
 {
 	ScopeInterruptDisabler interrupt_disabler;
 
@@ -97,12 +111,11 @@ MemoryRange memory_allocate_page_identity(PML4Table* address_space, AllocationFl
 		}
 	}
 
-	// FIXME: Panic!
-	ASSERT(false);
+	panic("memory_allocate_page_identity failed!!");
 	return MemoryRange { };
 }
 
-void memory_free(PML4Table* address_space, MemoryRange& virtual_range)
+void memory_free(PML4T* address_space, MemoryRange& virtual_range)
 {
 	ASSERT(virtual_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
@@ -118,6 +131,30 @@ void memory_free(PML4Table* address_space, MemoryRange& virtual_range)
 			virtual_free(address_space, virtual_page_range);
 		}
 	}
+}
+
+static MemoryRange kernel_physical_range(BootloaderMemoryMap& memory_map)
+{
+	for(size_t i = 0; i < memory_map.length; i++) {
+		BootloaderMemoryMapEntry const& entry = memory_map.entries[i];
+		if(entry.type == MemoryRegionType::KernelAndModules) {
+			return MemoryRange { entry.address, ALIGN_UP(entry.size, PAGE_SIZE) };
+		}
+	}
+	
+	return MemoryRange { 0, 0 };
+}
+
+static MemoryRange framebuffer_physical_range(BootloaderMemoryMap& memory_map)
+{
+	for(size_t i = 0; i < memory_map.length; i++) {
+		BootloaderMemoryMapEntry const& entry = memory_map.entries[i];
+		if(entry.type == MemoryRegionType::Framebuffer) {
+			return MemoryRange { entry.address, ALIGN_UP(entry.size, PAGE_SIZE) };
+		}
+	}
+	
+	return MemoryRange { 0, 0 };
 }
 
 }

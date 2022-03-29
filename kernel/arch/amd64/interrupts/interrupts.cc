@@ -48,7 +48,10 @@ void common_interrupt_handler(RegisterState* registers)
 	if(registers->interrupt_vector < 32) {
 		k_printf("\nException Type: %s\n", exception_code_names[registers->interrupt_vector]);
 
+		// TODO: Parse the error code so that we get more useful information
 		k_printf("\nError Code: %xl\n", registers->error_code);
+
+		k_printf("RIP: %xl\n", registers->rip);
 
 		k_printf("RSP: %xl, RBP: %xl\n", registers->rsp, registers->rbp);
 		k_printf("RSI: %xl, RDI: %xl\n", registers->rsi, registers->rdi);

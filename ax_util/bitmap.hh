@@ -17,7 +17,7 @@ struct Bitmap {
 		, initialized(false)
 	{
 		if(chunk_count != 0) {
-			size_t bitmap_size_in_bytes = ALIGN_UP(chunk_count / 8, 8);
+			size_t bitmap_size_in_bytes = ALIGN_UP(chunk_count, 8) / 8;
 
 			raw_data = (uint8_t*)malloc(bitmap_size_in_bytes);
 			initialized = true;
@@ -30,11 +30,11 @@ struct Bitmap {
 		, initialized(true)
 	{ }
 
-	void init(size_t chunk_count)
+	void init(size_t num_chunks)
 	{
 		if(!initialized) {
-			size_t bitmap_size_in_bytes = ALIGN_UP(chunk_count / 8, 8);
-
+			size_t bitmap_size_in_bytes = ALIGN_UP(num_chunks, 8) / 8;
+			chunk_count = num_chunks;
 			raw_data = (uint8_t*)malloc(bitmap_size_in_bytes);
 			initialized = true;
 		}

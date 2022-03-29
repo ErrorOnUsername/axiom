@@ -19,7 +19,7 @@ class Heap {
 	static size_t chunks_needed(size_t size)
 	{
 		// Round up the size to chunk boundaries so that we can fit all the data.
-		return ALIGN_UP(size, CHUNK_SIZE);
+		return ALIGN_UP(size, CHUNK_SIZE) / CHUNK_SIZE;
 	}
 
 	static AllocationHeader const* allocation_header_at_addr(void* addr)

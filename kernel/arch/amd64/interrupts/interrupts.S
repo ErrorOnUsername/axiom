@@ -17,10 +17,12 @@
 	pushq %rsi
 	pushq %rbp
 	pushq %rsp
+	lea   (%rip), %rax
+	pushq %rax
 .endm
 
 .macro pop_all
-	addq $8,  %rsp
+	addq $16, %rsp
 	popq %rbp
 	popq %rsi
 	popq %rdi

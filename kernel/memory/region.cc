@@ -44,9 +44,7 @@ void PhysicalMemoryRegion::set_range_used(MemoryRange& range, bool used)
 {
 	ASSERT(range.is_page_aligned());
 
-	size_t index      = (range.start - start) / PAGE_SIZE;
-	size_t page_count = range.page_count();
-	physical_page_bitmap.set_range(index, page_count, used);
+	physical_page_bitmap.set_range((range.start - start) / PAGE_SIZE, range.page_count(), used);
 }
 
 MemoryRange PhysicalMemoryRegion::allocate_physical_pages(size_t page_count)
@@ -91,7 +89,11 @@ bool PhysicalMemoryRegion::is_range_used(MemoryRange const& range)
 	ASSERT(range.is_page_aligned());
 	ASSERT(is_range_in_region(range));
 
-	return physical_page_bitmap.verify_range_occupied((range.start - start) / PAGE_SIZE, range.page_count());
+	size_t index = (range.start - start) / PAGE_SIZE;
+	size_t count = range.page_count();
+	bool thing = physical_page_bitmap.verify_range_occupied(index, count);
+
+	return thing;
 }
 
 }

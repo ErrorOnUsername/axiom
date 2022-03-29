@@ -57,7 +57,7 @@ bool physical_is_range_used(MemoryRange& physical_range)
 			return region.is_range_used(physical_range);
 		}
 	}
-	return false;
+	return true;
 }
 
 MemoryRange physical_allocate_pages(size_t page_count)

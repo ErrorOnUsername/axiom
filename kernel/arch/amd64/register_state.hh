@@ -5,6 +5,7 @@
 #define REGISTER_STATE_SIZE (8 * 18)
 
 struct RegisterState {
+	uint64_t rip;
 	uint64_t rsp;
 	uint64_t rbp;
 	uint64_t rsi;
