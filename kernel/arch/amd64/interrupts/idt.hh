@@ -12,17 +12,17 @@
 namespace Kernel::IDT {
 
 struct IDTEntryDescriptor {
-	uint16_t offset_0;
-	uint16_t selector;
-	uint8_t  ist;
-	uint8_t  type_and_attributes;
-	uint16_t offset_1;
-	uint32_t offset_2;
-	uint32_t reserved;
+	u16 offset_0;
+	u16 selector;
+	u8  ist;
+	u8  type_and_attributes;
+	u16 offset_1;
+	u32 offset_2;
+	u32 reserved;
 } PACKED;
 
-void set_idt_entry(uint8_t interrupt_vector, uint8_t type_and_attributes, void (*handler)());
-void set_offset_of_idt_entry(IDTEntryDescriptor* descriptor, uint64_t offset);
+void set_idt_entry(u8 interrupt_vector, u8 type_and_attributes, void (*handler)());
+void set_offset_of_idt_entry(IDTEntryDescriptor* descriptor, u64 offset);
 
 extern "C" void* isr_table[];
 

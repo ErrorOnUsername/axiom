@@ -7,7 +7,7 @@
 
 namespace Kernel {
 
-static uint8_t k_stack[32768];
+static u8 k_stack[32768];
 
 static stivale2_header_tag_framebuffer framebuffer_header_tag {
 	.tag = {
@@ -27,7 +27,7 @@ static stivale2_header stivale2_header {
 	.tags = (uintptr_t)&framebuffer_header_tag
 };
 
-void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
+void* get_stivale2_tag(stivale2_struct* stivale2_struct, u64 id)
 {
 
 	auto* current_tag = (stivale2_tag*)stivale2_struct->tags;
@@ -43,7 +43,6 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id)
 	}
 }
 
-
 Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const& entry)
 {
 	return {
@@ -53,7 +52,7 @@ Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_m
 	};
 }
 
-extern "C" void k_init(Memory::BootloaderMemoryMap&, addr_t framebuffer_addr, uint16_t framebuffer_width, uint16_t framebuffer_height);
+extern "C" void k_init(Memory::BootloaderMemoryMap&, addr_t framebuffer_addr, u16 framebuffer_width, u16 framebuffer_height);
 
 extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 {
@@ -68,7 +67,7 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 		for(;;);
 	}
 
-	uint64_t memory_map_entry_count = memory_map_tag->entries;
+	u64 memory_map_entry_count = memory_map_tag->entries;
 	stivale2_mmap_entry* memmap_entries = memory_map_tag->memmap;
 	Memory::BootloaderMemoryMapEntry memory_map_entries[memory_map_entry_count];
 

@@ -95,7 +95,7 @@ void physical_free_memory_range(MemoryRange& physical_range)
 
 static void parse_memory_map(BootloaderMemoryMap const& memory_map)
 {
-	for(uint64_t i = 0; i < memory_map.length; i++) {
+	for(u64 i = 0; i < memory_map.length; i++) {
 		BootloaderMemoryMapEntry& current_entry = memory_map.entries[i];
 
 		klogf(LogLevel::Info, "PhysicalMemoryRegion: { address: %xl, length: %xl, type: %s }"
@@ -110,8 +110,8 @@ static void parse_memory_map(BootloaderMemoryMap const& memory_map)
 		// stivale2 guarantees that all sections marked "USABLE" are page-aligned,
 		// but we still check so that, if we ever use a different bootloader that
 		// doesn't have this behavior, it won't be a problem.
-		uint16_t addr_adjustment = (PAGE_SIZE - (current_entry.address % PAGE_SIZE)) % PAGE_SIZE;
-		uint16_t size_adjustment = current_entry.size % PAGE_SIZE;
+		u16 addr_adjustment = (PAGE_SIZE - (current_entry.address % PAGE_SIZE)) % PAGE_SIZE;
+		u16 size_adjustment = current_entry.size % PAGE_SIZE;
 
 		current_entry.address += addr_adjustment;
 		current_entry.size    -= addr_adjustment;
@@ -137,9 +137,9 @@ static void parse_memory_map(BootloaderMemoryMap const& memory_map)
 			highest_page = page_index;
 
 		// Walk the pages in each Usable section to find all contiguous regions
-		for(uint64_t page_addr = current_entry.address;
-		             page_addr < (current_entry.address + current_entry.size);
-		             page_addr += PAGE_SIZE)
+		for(u64 page_addr = current_entry.address;
+		        page_addr < (current_entry.address + current_entry.size);
+		        page_addr += PAGE_SIZE)
 		{
 			if(!usable_contiguous_ranges.is_empty()
 			   && usable_contiguous_ranges.last().start + usable_contiguous_ranges.last().size == page_addr) {

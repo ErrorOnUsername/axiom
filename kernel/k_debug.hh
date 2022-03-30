@@ -25,7 +25,7 @@ enum class LogLevel {
 struct DebugFileLocation {
 	char const* filepath;
 	char const* function_name;
-	uint32_t    line;
+	u32         line;
 
 	char const* get_root_filename() const;
 };

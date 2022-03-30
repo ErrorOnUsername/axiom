@@ -2,7 +2,7 @@
 
 namespace Kernel::Memory {
 
-const char* memory_map_type_as_string(uint32_t type)
+const char* memory_map_type_as_string(u32 type)
 {
 	switch(type) {
 		case 1:

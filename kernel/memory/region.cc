@@ -49,7 +49,7 @@ void PhysicalMemoryRegion::set_range_used(MemoryRange& range, bool used)
 
 MemoryRange PhysicalMemoryRegion::allocate_physical_pages(size_t page_count)
 {
-	int64_t index = physical_page_bitmap.find_first_fit(page_count);
+	i64 index = physical_page_bitmap.find_first_fit(page_count);
 	if(index == -1) {
 		klogf(LogLevel::Warning, "MemoryRegion: { start: %xl, size: %xl } could not allocate %us additional pages!"
 		    , start

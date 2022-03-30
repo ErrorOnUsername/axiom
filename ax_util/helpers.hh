@@ -30,9 +30,9 @@
 	Class(Class&&) = delete;           \
 	Class& operator=(Class&&) = delete
 
-static constexpr uint64_t explode_byte(uint8_t byte)
+static constexpr u64 explode_byte(u8 byte)
 {
-	uint64_t big_byte = byte;
+	u64 big_byte = byte;
 	return (big_byte << 56) | (big_byte << 48) |
 	       (big_byte << 40) | (big_byte << 32) |
 	       (big_byte << 24) | (big_byte << 16) |

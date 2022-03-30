@@ -21,7 +21,7 @@ void init_gdt()
 {
 	DescriptorTablePointer descriptor { };
 	descriptor.size = sizeof(custom_gdt) - 1;
-	descriptor.offset = (uint64_t)&custom_gdt;
+	descriptor.offset = (addr_t)&custom_gdt;
 	load_gdt(&descriptor);
 	klogf(LogLevel::Info, "loaded GDT with size: %x offset: %xl", descriptor.size, descriptor.offset);
 }

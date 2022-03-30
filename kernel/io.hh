@@ -4,11 +4,11 @@
 
 namespace IO {
 
-static constexpr uint16_t QEMU_SERIAL_PORT = 0xE9;
+static constexpr u16 QEMU_SERIAL_PORT = 0xE9;
 
-inline uint8_t in8(int16_t port)
+inline u8 in8(i16 port)
 {
-	uint8_t ret;
+	u8 ret;
 	asm volatile(
 		"inb %1, %0"
 		: "=a"(ret)
@@ -17,9 +17,9 @@ inline uint8_t in8(int16_t port)
 	return ret;
 }
 
-inline uint16_t in16(int16_t port)
+inline u16 in16(i16 port)
 {
-	uint16_t ret;
+	u16 ret;
 	asm volatile(
 		"inw %1, %0"
 		: "=a"(ret)
@@ -28,9 +28,9 @@ inline uint16_t in16(int16_t port)
 	return ret;
 }
 
-inline uint32_t in32(int16_t port)
+inline u32 in32(i16 port)
 {
-	uint32_t ret;
+	u32 ret;
 	asm volatile(
 		"inl %1, %0"
 		: "=a"(ret)
@@ -39,17 +39,17 @@ inline uint32_t in32(int16_t port)
 	return ret;
 }
 
-inline void out8(uint16_t port, uint8_t data)
+inline void out8(u16 port, u8 data)
 {
 	asm volatile("outb %0, %1" :: "a"(data),  "Nd"(port));
 }
 
-inline void out16(uint16_t port, uint8_t data)
+inline void out16(u16 port, u8 data)
 {
 	asm volatile("outw %0, %1" :: "a"(data),  "Nd"(port));
 }
 
-inline void out32(uint16_t port, uint8_t data)
+inline void out32(u16 port, u8 data)
 {
 	asm volatile("outl %0, %1" :: "a"(data),  "Nd"(port));
 }

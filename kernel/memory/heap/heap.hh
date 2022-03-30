@@ -24,10 +24,10 @@ class Heap {
 
 	static AllocationHeader const* allocation_header_at_addr(void* addr)
 	{
-		return (AllocationHeader const*)(((uint8_t*)addr) - sizeof(AllocationHeader));
+		return (AllocationHeader const*)(((u8*)addr) - sizeof(AllocationHeader));
 	}
 public:
-	Heap(uint8_t* heap_pool)
+	Heap(u8* heap_pool)
 		: m_heap_pool(heap_pool)
 		, m_pool_size(DATA_SIZE)
 		, m_bitmap(&m_raw_bitmap[0], TOTAL_CHUNKS)
@@ -47,7 +47,7 @@ public:
 		// FIXME: Don't always look for a perfectly-sized opening! We should
 		//        have a threshold where we just look for a chunk slopily and
 		//        find one that's at least big enough.
-		int64_t chunk_index = m_bitmap.find_first_fit(chunks);
+		i64 chunk_index = m_bitmap.find_first_fit(chunks);
 		if(chunk_index == -1)
 			return nullptr;
 
@@ -67,7 +67,7 @@ public:
 		if(!data)
 			return;
 		AllocationHeader const* alloc_header = allocation_header_at_addr(data);
-		ASSERT((uint8_t*)alloc_header >= m_heap_pool && (uint8_t*)alloc_header < m_heap_pool + TOTAL_CHUNKS * CHUNK_SIZE);
+		ASSERT((u8*)alloc_header >= m_heap_pool && (u8*)alloc_header < m_heap_pool + TOTAL_CHUNKS * CHUNK_SIZE);
 
 		size_t total_chunks = alloc_header->allocation_size_in_bytes / CHUNK_SIZE;
 		size_t start_chunk_index = ((addr_t)alloc_header - (addr_t)m_heap_pool) / CHUNK_SIZE;
@@ -82,12 +82,12 @@ public:
 private:
 	static constexpr size_t TOTAL_CHUNKS = (DATA_SIZE + (DATA_SIZE % CHUNK_SIZE)) / CHUNK_SIZE;
 
-	uint8_t* m_heap_pool;
+	u8*    m_heap_pool;
 	size_t m_pool_size;
 
 	AX::Bitmap m_bitmap;
-	uint8_t m_raw_bitmap[TOTAL_CHUNKS];
-	size_t m_allocated_chunks;
+	u8         m_raw_bitmap[TOTAL_CHUNKS];
+	size_t     m_allocated_chunks;
 };
 
 }

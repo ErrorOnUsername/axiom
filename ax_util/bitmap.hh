@@ -7,9 +7,9 @@
 namespace AX {
 
 struct Bitmap {
-	uint8_t* raw_data;
-	size_t   chunk_count;
-	bool     initialized;
+	u8*    raw_data;
+	size_t chunk_count;
+	bool   initialized;
 
 	Bitmap(size_t num_chunks = 0)
 		: raw_data(nullptr)
@@ -19,12 +19,12 @@ struct Bitmap {
 		if(chunk_count != 0) {
 			size_t bitmap_size_in_bytes = ALIGN_UP(chunk_count, 8) / 8;
 
-			raw_data = (uint8_t*)malloc(bitmap_size_in_bytes);
+			raw_data = (u8*)malloc(bitmap_size_in_bytes);
 			initialized = true;
 		}
 	}
 
-	Bitmap(uint8_t* data_ptr, size_t num_chunks)
+	Bitmap(u8* data_ptr, size_t num_chunks)
 		: raw_data(data_ptr)
 		, chunk_count(num_chunks)
 		, initialized(true)
@@ -35,18 +35,18 @@ struct Bitmap {
 		if(!initialized) {
 			size_t bitmap_size_in_bytes = ALIGN_UP(num_chunks, 8) / 8;
 			chunk_count = num_chunks;
-			raw_data = (uint8_t*)malloc(bitmap_size_in_bytes);
+			raw_data = (u8*)malloc(bitmap_size_in_bytes);
 			initialized = true;
 		}
 	}
 
-	int64_t find_first_fit(size_t num_chunks)
+	i64 find_first_fit(size_t num_chunks)
 	{
 		ASSERT(num_chunks <= chunk_count);
 
-		size_t  running_length       = 0;
-		uint8_t current_chunk_sector = 0;
-		uint8_t current_chunk_bit    = 0;
+		size_t running_length       = 0;
+		u8     current_chunk_sector = 0;
+		u8     current_chunk_bit    = 0;
 
 		for(size_t i = 0; i < chunk_count; i++) {
 			current_chunk_sector = i / 8;
@@ -76,8 +76,8 @@ struct Bitmap {
 
 		// FIXME: Optimize this so that it doesn't just write individual bits. We
 		//        should write bytes at a time as well, if we're able to.
-		uint8_t current_chunk_sector = 0;
-		uint8_t current_chunk_bit    = 0;
+		u8 current_chunk_sector = 0;
+		u8 current_chunk_bit    = 0;
 
 		for(size_t i = index; i < (index + length); i++) {
 			current_chunk_sector = i / 8;
@@ -91,7 +91,7 @@ struct Bitmap {
 		}
 	}
 
-	void fill(uint8_t value)
+	void fill(u8 value)
 	{
 		__builtin_memset((void*)raw_data, value, chunk_count / 8);
 	}
@@ -108,8 +108,8 @@ struct Bitmap {
 
 	inline bool verify_occupied(size_t chunk_index)
 	{
-		uint8_t chunk_sector        = raw_data[chunk_index / 8];
-		uint8_t chunk_sector_offset = 7 - (chunk_index % 8);
+		u8 chunk_sector        = raw_data[chunk_index / 8];
+		u8 chunk_sector_offset = 7 - (chunk_index % 8);
 
 		return chunk_sector & (1 << chunk_sector_offset);
 	}

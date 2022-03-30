@@ -13,7 +13,7 @@
 
 namespace Kernel {
 
-extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuffer_addr, uint16_t framebuffer_width, uint16_t framebuffer_height)
+extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuffer_addr, u16 framebuffer_width, u16 framebuffer_height)
 {
 	k_malloc_init();
 
@@ -40,7 +40,7 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	k_printf("%s\n", banner);
 
-	EarlyConsole::initialize_early_console((uint32_t*)framebuffer_addr, framebuffer_width, framebuffer_height);
+	EarlyConsole::initialize_early_console((u32*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
 	char const* entry_msg = "Welcome to Axiom V0.1!";
 	char        c         = entry_msg[0];

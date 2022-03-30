@@ -6,7 +6,7 @@
 
 namespace Kernel::GDT {
 
-enum class GDTEntryOffset : uint16_t {
+enum class GDTEntryOffset : u16 {
 	NullSegment          = 0x0000,
 	KernelCodeSegment    = 0x0008,
 	KernelDataSegment    = 0x0010,
@@ -15,12 +15,12 @@ enum class GDTEntryOffset : uint16_t {
 };
 
 struct GDTEntry {
-	uint16_t limit_0;
-	uint16_t base_0;
-	uint8_t base_1;
-	uint8_t access_byte;
-	uint8_t limit_and_flags;
-	uint8_t base_2;
+	u16 limit_0;
+	u16 base_0;
+	u8  base_1;
+	u8  access_byte;
+	u8  limit_and_flags;
+	u8  base_2;
 } PACKED;
 
 struct GDT {

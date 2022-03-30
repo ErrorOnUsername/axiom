@@ -5,8 +5,8 @@
 namespace Kernel {
 
 struct DescriptorTablePointer {
-	uint16_t size;
-	uint64_t offset;
+	u16 size;
+	u64 offset;
 } PACKED;
 
 }

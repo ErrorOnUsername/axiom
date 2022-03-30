@@ -15,8 +15,8 @@ using KHeap = Kernel::Memory::Heap<K_MALLOC_POOL_SIZE, BITMAP_CHUNK_SIZE>;
 static AX::Lock s_heap_lock;
 
 static KHeap* k_malloc_heap_ptr;
-SECTION(.kernel_heap) static uint8_t k_malloc_pool[K_MALLOC_POOL_SIZE];
-alignas(KHeap) static uint8_t g_kmalloc_heap_raw[sizeof(KHeap)];
+SECTION(.kernel_heap) static u8 k_malloc_pool[K_MALLOC_POOL_SIZE];
+alignas(KHeap) static u8 g_kmalloc_heap_raw[sizeof(KHeap)];
 
 void k_malloc_init()
 {

@@ -6,7 +6,7 @@
 
 namespace Kernel {
 
-void* get_stivale2_tag(stivale2_struct* stivale2_struct, uint64_t id);
+void* get_stivale2_tag(stivale2_struct* stivale2_struct, u64 id);
 
 Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const&);
 

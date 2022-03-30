@@ -10,7 +10,7 @@ void* memset(void* destination_ptr, int value, size_t size)
 
 	if(!(dest & 0x3)) {
 		size_t size_count = size / sizeof(size_t);
-		size_t exploded_value = explode_byte((uint8_t)value);
+		size_t exploded_value = explode_byte((u8)value);
 
 		asm volatile(
 			"rep stosq\n"

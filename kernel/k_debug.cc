@@ -54,21 +54,21 @@ int k_vprintf(const char* fmt, va_list args)
 						if(fmt[idx + 1] == 'l') {
 							idx++;
 
-							int64_t value = va_arg(args, int64_t);
+							i64 value = va_arg(args, i64);
 
 							if(value < 0) {
 								dbg_putchar('-');
 								value *= -1;
 							}
 
-							int64_t tmp_value = value / 10;
-							uint64_t place = 1;
+							i64 tmp_value = value / 10;
+							u64 place = 1;
 							while(tmp_value != 0) {
 								place *= 10;
 								tmp_value /= 10;
 							}
 
-							uint8_t current_digit = 0;
+							u8 current_digit = 0;
 							while(place != 0) {
 								current_digit = value / place;
 								dbg_putchar('0' + current_digit);
@@ -76,21 +76,21 @@ int k_vprintf(const char* fmt, va_list args)
 								place /= 10;
 							}
 						} else {
-							int32_t value = va_arg(args, int32_t);
+							i32 value = va_arg(args, i32);
 
 							if(value < 0) {
 								dbg_putchar('-');
 								value *= -1;
 							}
 
-							int32_t tmp_value = value / 10;
-							uint32_t place = 1;
+							i32 tmp_value = value / 10;
+							u32 place = 1;
 							while(tmp_value != 0) {
 								place *= 10;
 								tmp_value /= 10;
 							}
 
-							uint8_t current_digit = 0;
+							u8 current_digit = 0;
 							while(place != 0) {
 								current_digit = value / place;
 								dbg_putchar('0' + current_digit);
@@ -108,16 +108,16 @@ int k_vprintf(const char* fmt, va_list args)
 						if(c == 'l') {
 							idx++;
 
-							uint64_t value = va_arg(args, uint64_t);
-							uint64_t tmp_value = value / 10;
-							uint64_t place = 1;
+							u64 value = va_arg(args, u64);
+							u64 tmp_value = value / 10;
+							u64 place = 1;
 
 							while(tmp_value != 0) {
 								place *= 10;
 								tmp_value /= 10;
 							}
 
-							uint8_t current_digit = 0;
+							u8 current_digit = 0;
 							while(place != 0) {
 								current_digit = value / place;
 								dbg_putchar('0' + current_digit);
@@ -127,16 +127,16 @@ int k_vprintf(const char* fmt, va_list args)
 						} else if(c == 's') {
 							idx++;
 
-							size_t value = va_arg(args, uint64_t);
+							size_t value = va_arg(args, u64);
 							size_t tmp_value = value / 10;
-							uint64_t place = 1;
+							u64 place = 1;
 
 							while(tmp_value != 0) {
 								place *= 10;
 								tmp_value /= 10;
 							}
 
-							uint8_t current_digit = 0;
+							u8 current_digit = 0;
 							while(place != 0) {
 								current_digit = value / place;
 								dbg_putchar('0' + current_digit);
@@ -144,16 +144,16 @@ int k_vprintf(const char* fmt, va_list args)
 								place /= 10;
 							}
 						} else {
-							uint32_t value = va_arg(args, uint32_t);
-							uint32_t tmp_value = value / 10;
-							uint64_t place = 1;
+							u32 value = va_arg(args, u32);
+							u32 tmp_value = value / 10;
+							u64 place = 1;
 
 							while(tmp_value != 0) {
 								place *= 10;
 								tmp_value /= 10;
 							}
 
-							uint8_t current_digit = 0;
+							u8 current_digit = 0;
 							while(place != 0) {
 								current_digit = value / place;
 								dbg_putchar('0' + current_digit);
@@ -171,24 +171,24 @@ int k_vprintf(const char* fmt, va_list args)
 						if(fmt[idx + 1] == 'l') {
 							c = fmt[++idx];
 
-							uint64_t value = va_arg(args, uint64_t);
-							int8_t place = 60;
+							u64 value = va_arg(args, u64);
+							i8 place = 60;
 							dbg_putchar('0');
 							dbg_putchar('x');
 
 							while(place >= 0) {
-								uint8_t nibble = ((value >> place) & 0xf);
+								u8 nibble = ((value >> place) & 0xf);
 								dbg_putchar(lowercase_hex_values[nibble]);
 								place -= 4;
 							}
 						} else {
-							uint32_t value = va_arg(args, uint32_t);
-							int8_t place = 28;
+							u32 value = va_arg(args, u32);
+							i8 place = 28;
 							dbg_putchar('0');
 							dbg_putchar('x');
 
 							while(place >= 0) {
-								uint8_t nibble = ((value >> place) & 0xf);
+								u8 nibble = ((value >> place) & 0xf);
 								dbg_putchar(lowercase_hex_values[nibble]);
 								place -= 4;
 							}
@@ -200,24 +200,24 @@ int k_vprintf(const char* fmt, va_list args)
 						if(fmt[idx + 1] == 'l') {
 							c = fmt[++idx];
 
-							uint64_t value = va_arg(args, uint64_t);
-							int8_t place = 60;
+							u64 value = va_arg(args, u64);
+							i8 place = 60;
 							dbg_putchar('0');
 							dbg_putchar('X');
 
 							while(place >= 0) {
-								uint8_t nibble = ((value >> place) & 0xf);
+								u8 nibble = ((value >> place) & 0xf);
 								dbg_putchar(uppercase_hex_values[nibble]);
 								place -= 4;
 							}
 						} else {
-							uint32_t value = va_arg(args, uint32_t);
-							int8_t place = 28;
+							u32 value = va_arg(args, u32);
+							i8 place = 28;
 							dbg_putchar('0');
 							dbg_putchar('X');
 
 							while(place >= 0) {
-								uint8_t nibble = ((value >> place) & 0xf);
+								u8 nibble = ((value >> place) & 0xf);
 								dbg_putchar(uppercase_hex_values[nibble]);
 								place -= 4;
 							}
@@ -283,14 +283,14 @@ int k_vprintf(const char* fmt, va_list args)
 						void* argument = va_arg(args, void*);
 
 						/* FIXME: If we ever end up supporting non-64-bit architectures, this wont work */
-						uint64_t value = (uint64_t)argument;
-						int8_t place = 60;
+						u64 value = (u64)argument;
+						i8 place = 60;
 
 						dbg_putchar('0');
 						dbg_putchar('x');
 
 						while(place >= 0) {
-							uint8_t nibble = ((value >> place) & 0xf);
+							u8 nibble = ((value >> place) & 0xf);
 							dbg_putchar(lowercase_hex_values[nibble]);
 							place -= 4;
 						}

@@ -4,18 +4,18 @@
 
 namespace Kernel::EarlyConsole {
 
-static constexpr uint16_t TAB_WIDTH        = 4;
-static constexpr uint16_t CHARACTER_WIDTH  = 8;
-static constexpr uint16_t CHARACTER_HEIGHT = 16;
+static constexpr u16 TAB_WIDTH        = 4;
+static constexpr u16 CHARACTER_WIDTH  = 8;
+static constexpr u16 CHARACTER_HEIGHT = 16;
 
-static uint16_t row    = 0;
-static uint16_t column = 0;
+static u16 row    = 0;
+static u16 column = 0;
 
-static uint32_t* framebuffer        = nullptr;
-static uint16_t  framebuffer_width  = 0;
-static uint16_t  framebuffer_height = 0;
+static u32* framebuffer        = nullptr;
+static u16  framebuffer_width  = 0;
+static u16  framebuffer_height = 0;
 
-static uint8_t font[] = {
+static u8 font[] = {
 	0b00000000, // --------
 	0b00000000, // --------
 	0b00011000, // ---##---
@@ -1615,7 +1615,7 @@ static uint8_t font[] = {
 	0b00000000, // --------
 };
 
-void initialize_early_console(uint32_t* fb_addr, uint16_t fb_width, uint16_t fb_height)
+void initialize_early_console(u32* fb_addr, u16 fb_width, u16 fb_height)
 {
 	framebuffer        = fb_addr;
 	framebuffer_width  = fb_width;
@@ -1645,11 +1645,11 @@ void put_char(char c)
 
 void draw_char(char c)
 {
-	for(uint8_t i = 0; i < CHARACTER_HEIGHT; i++) {
-		for(uint8_t j = 0; j < CHARACTER_WIDTH; j++) {
-			uint16_t pixel_x = (CHARACTER_WIDTH * column) + j;
-			uint16_t pixel_y = (CHARACTER_HEIGHT * row) + i;
-			uint8_t  character_pixel = font[((c - '!') * CHARACTER_HEIGHT) + i] & (0b10000000 >> j);
+	for(u8 i = 0; i < CHARACTER_HEIGHT; i++) {
+		for(u8 j = 0; j < CHARACTER_WIDTH; j++) {
+			u16 pixel_x = (CHARACTER_WIDTH * column) + j;
+			u16 pixel_y = (CHARACTER_HEIGHT * row) + i;
+			u8  character_pixel = font[((c - '!') * CHARACTER_HEIGHT) + i] & (0b10000000 >> j);
 
 			framebuffer[pixel_y * framebuffer_width + pixel_x] = character_pixel ? 0xffffffff : 0x0;
 		}

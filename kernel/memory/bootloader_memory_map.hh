@@ -4,7 +4,7 @@
 
 namespace Kernel::Memory {
 
-enum MemoryRegionType : uint32_t {
+enum MemoryRegionType : u32 {
 	Usable                = 1,
 	Reserved              = 2,
 	ACPIReclaimable       = 3,
@@ -16,16 +16,16 @@ enum MemoryRegionType : uint32_t {
 };
 
 struct BootloaderMemoryMapEntry {
-	addr_t   address;
-	uint64_t size;
-	uint32_t type;
+	addr_t address;
+	u64    size;
+	u32    type;
 };
 
 struct BootloaderMemoryMap {
 	BootloaderMemoryMapEntry* entries;
-	uint64_t                  length;
+	u64                       length;
 };
 
-char const* memory_map_type_as_string(uint32_t type);
+char const* memory_map_type_as_string(u32 type);
 
 }
