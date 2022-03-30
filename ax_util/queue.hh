@@ -50,6 +50,11 @@ struct Queue {
 		return return_value;
 	}
 
+	bool is_empty() const
+	{
+		return count == 0;
+	}
+
 	void ensure_capacity(size_t desired_capacity)
 	{
 		auto* new_data = (T*)malloc(desired_capacity * sizeof(T));
