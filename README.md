@@ -1,6 +1,6 @@
-# Axiom
+![Axiom Logo](meta/logo.png)
 
-A 64-bit OS that I'm making for fun :)
+---
 
 ## Build Requirements
 
