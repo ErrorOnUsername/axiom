@@ -1,4 +1,6 @@
-![Axiom Logo](meta/logo.png)
+<p align="center">
+	<img width=400 src="meta/logo.png"/>
+</p>
 
 ---
 
