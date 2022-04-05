@@ -2,6 +2,7 @@
 #include <ax_util/types.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/arch/rtc.hh>
+#include <kernel/arch/pic.hh>
 #include <kernel/arch/amd64/gdt/gdt.hh>
 #include <kernel/arch/amd64/interrupts/idt.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
@@ -10,8 +11,12 @@
 #include <kernel/memory/region.hh>
 #include <kernel/memory/heap/k_malloc.hh>
 #include <kernel/system/early_console/early_console.hh>
+#include <kernel/system/scheduler/scheduler.hh>
+#include <kernel/time/pit.hh>
 
 namespace Kernel {
+
+extern "C" void on_task_switch_timer();
 
 extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuffer_addr, u16 framebuffer_width, u16 framebuffer_height)
 {
@@ -19,6 +24,10 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	GDT::init_gdt();
 	IDT::init_idt();
+
+	PIC::init();
+	// extern "C" function in scheduler.cc
+	PIT::init((void*)&on_task_switch_timer);
 
 	Memory::init_memory_management(memory_map);
 

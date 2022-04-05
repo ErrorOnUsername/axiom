@@ -6,6 +6,8 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 
 set( AXIOM_ARCH x86_64 )
 
+add_compile_definitions( AXIOM_ARCH_AMD64 )
+
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 add_custom_target( img

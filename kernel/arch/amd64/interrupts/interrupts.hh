@@ -12,4 +12,6 @@ struct ScopeInterruptDisabler {
 	~ScopeInterruptDisabler() { asm("sti;"); }
 };
 
+void register_irq(u8 irq_number, void* handler);
+
 }

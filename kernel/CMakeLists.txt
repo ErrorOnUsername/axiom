@@ -8,11 +8,14 @@ set( KERNEL_SOURCES
 	arch/amd64/interrupts/interrupts.cc
 	arch/amd64/interrupts/interrupts.S
 	arch/amd64/interrupts/IDT.cc
+	arch/amd64/interrupts/pic.cc
 	memory/bootloader_memory_map.cc
 	memory/memory_manager.cc
 	memory/physical.cc
 	memory/region.cc
 	system/early_console/early_console.cc
+	system/scheduler/scheduler.cc
+	time/pit.cc
 	k_start.cc
 	k_debug.cc
 	panic.cc

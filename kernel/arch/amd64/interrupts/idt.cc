@@ -33,7 +33,7 @@ void init_idt()
 	idtr.offset = (addr_t)&idt[0];
 	idtr.size = (IDT_ENTRY_COUNT * sizeof(IDTEntryDescriptor)) - 1;
 
-	for(u8 vec = 0; vec < 32; vec++) {
+	for(u8 vec = 0; vec < 48; vec++) {
 		set_idt_entry(vec, IDT_INTERRUPT_GATE_TA, isr_table[vec]);
 	}
 

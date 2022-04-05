@@ -21,7 +21,7 @@ struct IDTEntryDescriptor {
 	u32 reserved;
 } PACKED;
 
-void set_idt_entry(u8 interrupt_vector, u8 type_and_attributes, void (*handler)());
+void set_idt_entry(u8 interrupt_vector, u8 type_and_attributes, void* handler);
 void set_offset_of_idt_entry(IDTEntryDescriptor* descriptor, u64 offset);
 
 extern "C" void* isr_table[];

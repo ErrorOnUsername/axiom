@@ -1,8 +1,8 @@
 #include "panic.hh"
 
 #include <kernel/arch/cpu.hh>
-#include <kernel/arch/amd64/interrupts/interrupt_disabler.hh>
 #include <kernel/system/early_console/early_console.hh>
+#include <kernel/arch/interrupts.hh>
 
 namespace Kernel {
 

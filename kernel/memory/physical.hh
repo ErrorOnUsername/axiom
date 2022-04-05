@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ax_util/result.hh>
-#include <kernel/arch/amd64/paging.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/region.hh>
 

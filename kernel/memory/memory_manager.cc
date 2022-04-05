@@ -2,10 +2,10 @@
 
 #include <ax_util/helpers.hh>
 #include <ax_util/result.hh>
-#include <kernel/arch/amd64/interrupts/interrupt_disabler.hh>
-#include <kernel/arch/amd64/paging.hh>
+#include <kernel/arch/interrupts.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/memory.hh>
+#include <kernel/memory/paging.hh>
 #include <kernel/memory/physical.hh>
 #include <kernel/memory/region.hh>
 #include <kernel/k_debug.hh>
@@ -33,7 +33,7 @@ void init_memory_management(BootloaderMemoryMap& memmap)
 	enable_virtual_memory();
 }
 
-AX::Result memory_map(PML4T* address_space, MemoryRange& virtual_range, AllocationFlags flags)
+AX::Result memory_map(AddressSpace* address_space, MemoryRange& virtual_range, AllocationFlags flags)
 {
 	ASSERT(virtual_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
@@ -55,7 +55,7 @@ AX::Result memory_map(PML4T* address_space, MemoryRange& virtual_range, Allocati
 	return AX::Result::Success;
 }
 
-AX::Result memory_map_indentity(PML4T* address_space, MemoryRange& physical_range, AllocationFlags flags)
+AX::Result memory_map_indentity(AddressSpace* address_space, MemoryRange& physical_range, AllocationFlags flags)
 {
 	ASSERT(physical_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
@@ -69,7 +69,7 @@ AX::Result memory_map_indentity(PML4T* address_space, MemoryRange& physical_rang
 	return AX::Result::Success;
 }
 
-MemoryRange memory_allocate(PML4T* address_space, size_t size, AllocationFlags flags)
+MemoryRange memory_allocate(AddressSpace* address_space, size_t size, AllocationFlags flags)
 {
 	ASSERT(size % PAGE_SIZE == 0);
 	ScopeInterruptDisabler interrupt_disabler;
@@ -90,7 +90,7 @@ MemoryRange memory_allocate(PML4T* address_space, size_t size, AllocationFlags f
 	return virtual_range;
 }
 
-MemoryRange memory_allocate_page_identity(PML4T* address_space, AllocationFlags flags)
+MemoryRange memory_allocate_page_identity(AddressSpace* address_space, AllocationFlags flags)
 {
 	ScopeInterruptDisabler interrupt_disabler;
 
@@ -115,7 +115,7 @@ MemoryRange memory_allocate_page_identity(PML4T* address_space, AllocationFlags 
 	return MemoryRange { };
 }
 
-void memory_free(PML4T* address_space, MemoryRange& virtual_range)
+void memory_free(AddressSpace* address_space, MemoryRange& virtual_range)
 {
 	ASSERT(virtual_range.is_page_aligned());
 	ScopeInterruptDisabler interrupt_disabler;
