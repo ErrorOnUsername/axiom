@@ -17,7 +17,7 @@ GDT custom_gdt = {
 	{0, 0, 0, 0xf2, 0xa0, 0}, // DATA
 };
 
-void init_gdt()
+void init()
 {
 	DescriptorTablePointer descriptor { };
 	descriptor.size = sizeof(custom_gdt) - 1;

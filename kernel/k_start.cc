@@ -12,7 +12,6 @@
 #include <kernel/memory/heap/k_malloc.hh>
 #include <kernel/system/early_console/early_console.hh>
 #include <kernel/system/scheduler/scheduler.hh>
-#include <kernel/time/pit.hh>
 
 namespace Kernel {
 
@@ -22,12 +21,11 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 {
 	k_malloc_init();
 
-	GDT::init_gdt();
-	IDT::init_idt();
+	GDT::init();
+	IDT::init();
 
 	PIC::init();
-	// extern "C" function in scheduler.cc
-	PIT::init((void*)&on_task_switch_timer);
+	Scheduler::init();
 
 	Memory::init_memory_management(memory_map);
 
@@ -46,10 +44,9 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 	                     "\t / ____ \\  / . \\ _| || |__| | |  | |\n"
 	                     "\t/_/    \\_\\/_/ \\_\\_____\\____/|_|  |_|\n";
 
-
 	k_printf("%s\n", banner);
 
-	EarlyConsole::initialize_early_console((u32*)framebuffer_addr, framebuffer_width, framebuffer_height);
+	EarlyConsole::init((u32*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
 	char const* entry_msg = "Welcome to Axiom V0.1!";
 	char        c         = entry_msg[0];

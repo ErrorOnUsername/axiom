@@ -1615,7 +1615,7 @@ static u8 font[] = {
 	0b00000000, // --------
 };
 
-void initialize_early_console(u32* fb_addr, u16 fb_width, u16 fb_height)
+void init(u32* fb_addr, u16 fb_width, u16 fb_height)
 {
 	framebuffer        = fb_addr;
 	framebuffer_width  = fb_width;

@@ -21,7 +21,7 @@ PML4T* kernel_address_space()
 	return &kernel_pml4t;
 }
 
-void switch_address_space(addr_t addr_space_physical_address)
+void set_address_space(addr_t addr_space_physical_address)
 {
 	asm volatile("mov %%rax, %%cr3" :: "a"(addr_space_physical_address) : "memory");
 }
@@ -54,7 +54,7 @@ void init_virtual_memory()
 
 void enable_virtual_memory()
 {
-	switch_address_space((addr_t)kernel_address_space() - KERNEL_VIRTUAL_START);
+	set_address_space((addr_t)kernel_address_space() - KERNEL_VIRTUAL_START);
 }
 
 PML4T* create_address_space()

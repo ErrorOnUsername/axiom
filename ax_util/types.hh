@@ -18,3 +18,5 @@ using ptrdiff_t = __PTRDIFF_TYPE__;
 
 // BUG: This doesn't work for anything other than 64-bit
 using addr_t = u64;
+
+typedef void (*AXCallback)();

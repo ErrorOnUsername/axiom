@@ -113,7 +113,7 @@ static_assert(sizeof(PT) == 0x1000);
 
 PML4T* kernel_address_space();
 
-void switch_address_space(PML4T*);
+void set_address_space(addr_t);
 
 void init_virtual_memory();
 void enable_virtual_memory();

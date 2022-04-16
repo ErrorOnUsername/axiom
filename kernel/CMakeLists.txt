@@ -2,6 +2,7 @@ set( KERNEL_SOURCES
 	arch/amd64/cpu.cc
 	arch/amd64/paging.cc
 	arch/amd64/paging_utils.S
+	arch/amd64/processor.cc
 	arch/amd64/boot/boot_stivale.cc
 	arch/amd64/gdt/gdt.cc
 	arch/amd64/gdt/load_gdt.S
@@ -11,10 +12,12 @@ set( KERNEL_SOURCES
 	arch/amd64/interrupts/pic.cc
 	memory/bootloader_memory_map.cc
 	memory/memory_manager.cc
+	memory/paging.cc
 	memory/physical.cc
 	memory/region.cc
 	system/early_console/early_console.cc
 	system/scheduler/scheduler.cc
+	system/scheduler/thread.cc
 	time/pit.cc
 	k_start.cc
 	k_debug.cc

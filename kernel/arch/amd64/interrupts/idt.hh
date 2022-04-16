@@ -26,6 +26,6 @@ void set_offset_of_idt_entry(IDTEntryDescriptor* descriptor, u64 offset);
 
 extern "C" void* isr_table[];
 
-void init_idt();
+void init();
 
 }

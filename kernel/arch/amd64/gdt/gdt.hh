@@ -35,6 +35,6 @@ ALIGN(0x1000);
 extern GDT custom_gdt;
 extern "C" void load_gdt(DescriptorTablePointer* descriptor);
 
-void init_gdt();
+void init();
 
 }

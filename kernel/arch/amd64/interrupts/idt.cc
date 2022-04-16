@@ -28,7 +28,7 @@ void set_idt_entry(u8 interrupt_vector, u8 type_and_attributes, void* handler)
 	entry->reserved = 0;
 }
 
-void init_idt()
+void init()
 {
 	idtr.offset = (addr_t)&idt[0];
 	idtr.size = (IDT_ENTRY_COUNT * sizeof(IDTEntryDescriptor)) - 1;

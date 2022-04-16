@@ -8,7 +8,10 @@
 
 namespace Kernel::Memory {
 
+
 void init_memory_management(BootloaderMemoryMap&);
+
+void switch_address_space(AddressSpace*);
 
 AX::Result memory_map(AddressSpace* address_space, MemoryRange& virtual_range, AllocationFlags);
 AX::Result memory_map_indentity(AddressSpace* address_space, MemoryRange& physical_range, AllocationFlags);

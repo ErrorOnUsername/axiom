@@ -1,6 +1,7 @@
 #include <kernel/arch/pic.hh>
 
 #include <kernel/io.hh>
+#include <kernel/k_debug.hh>
 
 namespace Kernel::PIC {
 
@@ -52,6 +53,8 @@ void init()
 	pic_wait();
 	IO::out8(PIC2_DATA_PORT, 0);
 	pic_wait();
+
+	klog(LogLevel::Info, "PIC initialized");
 }
 
 void disable()

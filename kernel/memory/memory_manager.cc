@@ -141,7 +141,7 @@ static MemoryRange kernel_physical_range(BootloaderMemoryMap& memory_map)
 			return MemoryRange { entry.address, ALIGN_UP(entry.size, PAGE_SIZE) };
 		}
 	}
-	
+
 	return MemoryRange { 0, 0 };
 }
 
@@ -153,7 +153,7 @@ static MemoryRange framebuffer_physical_range(BootloaderMemoryMap& memory_map)
 			return MemoryRange { entry.address, ALIGN_UP(entry.size, PAGE_SIZE) };
 		}
 	}
-	
+
 	return MemoryRange { 0, 0 };
 }
 
