@@ -48,6 +48,6 @@ add_library( k_heap STATIC ${KERNEL_HEAP_SOURCES} )
 
 add_executable( kernel ${KERNEL_SOURCES} )
 
-target_link_options(kernel PRIVATE LINKER:-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -nostdlib -nodefaultlibs)
+target_link_options(kernel PRIVATE LINKER:-T ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld -nostdlib -nodefaultlibs)
 
 target_link_libraries( kernel PRIVATE gcc k_heap  )
