@@ -4,12 +4,18 @@
 
 ---
 
+## To-Do List
+- [ ] apic/ioapic
+- [ ] hpet
+- [ ] scheduler
+- [ ] syscall interface
+- [ ] IPC
+
+---
+
 ## Build Requirements
 
-You'll need `cmake` `make` `gcc` `xorriso` `qemu` and `mtools`
-
-### On Arch Systems:
-`sudo pacman -S cmake make gcc xorriso qemu mtools`
+You'll need `cmake` `make` `gcc` `xorriso` `qemu` and `mtools` (TODO: verify)
 
 ## Building Axiom
   * Clone the repo ***recursively*** (e.g. `git clone --recusive https://github.com/ErrorOnUsername/axiom.git`
