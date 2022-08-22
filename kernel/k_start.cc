@@ -1,10 +1,9 @@
-#include <ax_util/result.hh>
-#include <ax_util/types.hh>
+#include <libs/ax/result.hh>
+#include <libs/ax/types.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/arch/rtc.hh>
 #include <kernel/arch/pic.hh>
-#include <kernel/arch/amd64/gdt/gdt.hh>
-#include <kernel/arch/amd64/interrupts/idt.hh>
+#include <kernel/arch/processor.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/memory_manager.hh>
 #include <kernel/memory/memory.hh>
@@ -15,45 +14,49 @@
 
 namespace Kernel {
 
+// This looks ugly, but that's ok. It looks pretty when it gets printed.
+const char* banner = "\t__          ________ _      _____ ____  __  __ ______     _______ ____\n"
+                     "\t\\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____|   |__   __/ __ \\\n"
+                     "\t \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__         | | | |  | |\n"
+                     "\t  \\ \\/  \\/ / |  __| | |   | |   | |  | | |\\/| |  __|        | | | |  | |\n"
+                     "\t   \\  /\\  /  | |____| |___| |___| |__| | |  | | |____       | | | |__| /\n"
+                     "\t    \\/  \\/   |______|______\\_____\\____/|_|  |_|______|      |_|  \\____/\n"
+                     "\n"
+                     "\t          __   _______ ____  __  __\n"
+                     "\t    /\\    \\ \\ / /_   _/ __ \\|  \\/  |\n"
+                     "\t   /  \\    \\ V /  | || |  | | \\  / |\n"
+                     "\t  / /\\ \\    > <   | || |  | | |\\/| |\n"
+                     "\t / ____ \\  / . \\ _| || |__| | |  | |\n"
+                     "\t/_/    \\_\\/_/ \\_\\_____\\____/|_|  |_|\n";
+
+inline static Processor& boot_processor()
+{
+	alignas(Processor) static u8 boot_proc_storage[sizeof(Processor)];
+	return (Processor&)boot_proc_storage;
+}
+
 extern "C" void on_task_switch_timer();
 
 extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuffer_addr, u16 framebuffer_width, u16 framebuffer_height)
 {
 	k_malloc_init();
 
-	GDT::init();
-	IDT::init();
-
-	PIC::init();
-	Scheduler::init();
+	new (&boot_processor()) Processor();
+	boot_processor().initialize(0);
 
 	Memory::init_memory_management(memory_map);
 
-	// This looks ugly, but that's ok. It looks pretty when it gets printed.
-	const char* banner = "\t__          ________ _      _____ ____  __  __ ______     _______ ____\n"
-	                     "\t\\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____|   |__   __/ __ \\\n"
-	                     "\t \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__         | | | |  | |\n"
-	                     "\t  \\ \\/  \\/ / |  __| | |   | |   | |  | | |\\/| |  __|        | | | |  | |\n"
-	                     "\t   \\  /\\  /  | |____| |___| |___| |__| | |  | | |____       | | | |__| /\n"
-	                     "\t    \\/  \\/   |______|______\\_____\\____/|_|  |_|______|      |_|  \\____/\n"
-	                     "\n"
-	                     "\t          __   _______ ____  __  __\n"
-	                     "\t    /\\    \\ \\ / /_   _/ __ \\|  \\/  |\n"
-	                     "\t   /  \\    \\ V /  | || |  | | \\  / |\n"
-	                     "\t  / /\\ \\    > <   | || |  | | |\\/| |\n"
-	                     "\t / ____ \\  / . \\ _| || |__| | |  | |\n"
-	                     "\t/_/    \\_\\/_/ \\_\\_____\\____/|_|  |_|\n";
+	k_printf("[33;1mStarting up Axiom...[0m\n");
+
+	PIC::init();
+	Scheduler::init();
 
 	k_printf("%s\n", banner);
 
 	EarlyConsole::init((u32*)framebuffer_addr, framebuffer_width, framebuffer_height);
 
-	char const* entry_msg = "Welcome to Axiom V0.1!";
-	char        c         = entry_msg[0];
-	for(size_t i = 0; c != 0;) {
-		EarlyConsole::put_char(c);
-		c = entry_msg[++i];
-	}
+	for(size_t i = 0; banner[i] != 0; i++)
+		EarlyConsole::put_char(banner[i]);
 
 	for(;;);
 }

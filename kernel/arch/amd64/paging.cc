@@ -1,6 +1,6 @@
 #include "paging.hh"
 
-#include <ax_util/helpers.hh>
+#include <libs/ax/helpers.hh>
 #include <kernel/memory/memory.hh>
 #include <kernel/memory/memory_manager.hh>
 #include <kernel/k_debug.hh>

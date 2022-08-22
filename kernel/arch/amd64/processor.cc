@@ -1,16 +1,30 @@
 #include <kernel/arch/processor.hh>
 
-#include <ax_util/list.hh>
+#include <libs/ax/list.hh>
+#include <kernel/arch/amd64/boot/tables.hh>
+#include <kernel/arch/amd64/msr.hh>
 
 namespace Kernel {
 
-static AX::List<Proccessor*> processors;
-
-void Proccessor::initialize()
+void Processor::initialize(u8 cpu)
 {
-	processors.ensure_capacity(MAX_PROCESSOR_COUNT);
+	cpu_id = cpu;
+	idle_thread = nullptr;
+	thread = nullptr;
+
+	init_descriptor_tables();
+
+	msr_write(MSR_GS_BASE, (addr_t)this);
 }
 
-Thread* Proccessor::current_thread() { return nullptr; }
+Thread* Processor::current_thread()
+{
+	return nullptr /*(Thread*)read_gs_ptr(__builtin_offsetof(Proccessor, thread))*/;
+}
+
+Thread* Processor::current_idle_thread()
+{
+	return nullptr /*(Thread*)read_gs_ptr(__builtin_offsetof(Proccessor, idle_thread))*/;
+}
 
 }

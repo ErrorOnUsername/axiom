@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ax_util/types.hh>
-#include <ax_util/malloc.hh>
+#include "types.hh"
+#include "malloc.hh"
 
 namespace AX {
 

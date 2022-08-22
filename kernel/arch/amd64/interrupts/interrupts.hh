@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ax_util/helpers.hh>
+#include <libs/ax/helpers.hh>
 
 namespace Kernel {
 
@@ -12,6 +12,6 @@ struct ScopeInterruptDisabler {
 	~ScopeInterruptDisabler() { asm("sti;"); }
 };
 
-void register_irq(u8 irq_number, void* handler);
+void register_irq(u8 irq_number, void (*handler)());
 
 }

@@ -2,6 +2,6 @@
 
 namespace Kernel::PIT {
 
-void init(void* handler);
+void init(void (*handler)());
 
 }

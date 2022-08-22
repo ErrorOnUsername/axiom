@@ -1,6 +1,6 @@
 #include <stdarg.h>
 
-#include <ax_util/types.hh>
+#include <libs/ax/types.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/io.hh>
 

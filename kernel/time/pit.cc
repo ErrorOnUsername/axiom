@@ -1,6 +1,8 @@
 #include "pit.hh"
 
-#include <ax_util/assert.hh>
+#include <libs/ax/assert.hh>
+
+#include <kernel/arch/cpu.hh>
 #include <kernel/arch/interrupts.hh>
 #include <kernel/io.hh>
 #include <kernel/k_debug.hh>
@@ -26,33 +28,17 @@ static constexpr size_t TICK_RATE      = 1000;
 
 void reset_to_default_frequency();
 
-void init(void* handler)
+void init(void (*handler)())
 {
 	register_irq(TIMER_IRQ, handler);
 
 	IO::out8(PIT_CONTROL_PORT, TIMER0_SELECT | FULL_WORD_ACCESS_MODE | SQUARE_WAVE_MODE);
-	reset_to_default_frequency();
 
-	klogf(LogLevel::Info, "PIT initialized with with frequency: %us Hz", TICK_RATE);
-}
-
-bool set_frequency(size_t frequency)
-{
-	ScopeInterruptDisabler interrupt_disabler;
-	if(frequency > BASE_FREQUENCY)
-		return false;
-
-	size_t value = BASE_FREQUENCY / frequency;
+	size_t value = BASE_FREQUENCY / TICK_RATE;
 	IO::out8(TIMER0_PORT, value & 0xff);
 	IO::out8(TIMER0_PORT, (value & 0xff) >> 8);
 
-	return true;
-}
-
-void reset_to_default_frequency()
-{
-	ScopeInterruptDisabler interrupt_disabler;
-	ASSERT(set_frequency(TICK_RATE));
+	klogf(LogLevel::Info, "PIT initialized with with frequency: %us Hz", TICK_RATE);
 }
 
 }

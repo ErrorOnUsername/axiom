@@ -1,8 +1,9 @@
 #include "scheduler.hh"
 
-#include <ax_util/lock.hh>
-#include <ax_util/queue.hh>
+#include <libs/ax/lock.hh>
+#include <libs/ax/queue.hh>
 #include <kernel/arch/processor.hh>
+#include <kernel/arch/interrupts.hh>
 #include <kernel/system/scheduler/thread.hh>
 #include <kernel/memory/paging.hh>
 #include <kernel/time/pit.hh>
@@ -24,14 +25,16 @@ AX::Result init()
 	kernel_tasks.ensure_capacity(8);
 	user_tasks.ensure_capacity(16);
 
-	PIT::init((void*)&on_task_switch_timer);
+	PIT::init(&on_task_switch_timer);
 
 	return AX::Result::Success;
 }
 
+void start(Thread* thread, uintptr_t ip, uintptr_t sp) { }
+
 void pick_next()
 {
-	Thread* current_thread = Proccessor::current_thread();
+	Thread* current_thread = Processor::current_thread();
 	(void)current_thread;
 }
 
@@ -39,9 +42,12 @@ void pick_next()
 
 static void on_task_switch_timer()
 {
-	Proccessor::current_thread()->save_context();
+	// We don't want to get preempted while we're doing this.
+	ScopeInterruptDisabler disabler;
+
+	Processor::current_thread()->save_context();
 	Scheduler::pick_next();
-	Thread* new_thread = Proccessor::current_thread();
+	Thread* new_thread = Processor::current_thread();
 	if(!new_thread)
 		return;
 	new_thread->load_context();

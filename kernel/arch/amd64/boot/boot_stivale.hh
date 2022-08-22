@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ax_util/types.hh>
+#include <libs/ax/types.hh>
 #include <kernel/arch/amd64/boot/stivale2.h>
 #include <kernel/memory/bootloader_memory_map.hh>
 

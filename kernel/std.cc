@@ -1,8 +1,8 @@
 #include "std.hh"
 
-#include <ax_util/assert.hh>
-#include <ax_util/helpers.hh>
-#include <ax_util/types.hh>
+#include <libs/ax/assert.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/types.hh>
 
 void* memset(void* destination_ptr, int value, size_t size)
 {

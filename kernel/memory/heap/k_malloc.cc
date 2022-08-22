@@ -1,7 +1,7 @@
 #include "k_malloc.hh"
 
-#include <ax_util/helpers.hh>
-#include <ax_util/lock.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/lock.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/std.hh>
 #include <kernel/arch/cpu.hh>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <ax_util/assert.hh>
-#include <ax_util/bitmap.hh>
-#include <ax_util/helpers.hh>
-#include <ax_util/types.hh>
+#include <libs/ax/assert.hh>
+#include <libs/ax/bitmap.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/types.hh>
 
 namespace Kernel::Memory {
 

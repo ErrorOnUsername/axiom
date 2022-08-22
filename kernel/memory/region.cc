@@ -1,8 +1,8 @@
 #include "region.hh"
 
-#include <ax_util/assert.hh>
-#include <ax_util/helpers.hh>
-#include <ax_util/lock.hh>
+#include <libs/ax/assert.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/lock.hh>
 #include <kernel/k_debug.hh>
 
 namespace Kernel::Memory {

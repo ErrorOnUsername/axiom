@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ax_util/malloc.hh>
-#include <ax_util/assert.hh>
-#include <ax_util/types.hh>
+#include "malloc.hh"
+#include "assert.hh"
+#include "types.hh"
 
 namespace AX {
 

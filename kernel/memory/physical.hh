@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ax_util/result.hh>
+#include <libs/ax/result.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/region.hh>
 

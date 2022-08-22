@@ -1,7 +1,8 @@
 #include "boot_stivale.hh"
 
-#include <ax_util/helpers.hh>
-#include <ax_util/types.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/types.hh>
+
 #include <kernel/k_debug.hh>
 #include <kernel/arch/amd64/boot/stivale2.h>
 
@@ -43,21 +44,12 @@ void* get_stivale2_tag(stivale2_struct* stivale2_struct, u64 id)
 	}
 }
 
-Memory::BootloaderMemoryMapEntry memory_map_entry_from_stivale2_entry(stivale2_mmap_entry const& entry)
-{
-	return {
-		.address = entry.base,
-		.size = entry.length,
-		.type = entry.type
-	};
-}
-
 extern "C" void k_init(Memory::BootloaderMemoryMap&, addr_t framebuffer_addr, u16 framebuffer_width, u16 framebuffer_height);
 
 extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 {
 	auto* framebuffer_tag = (stivale2_struct_tag_framebuffer*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
-	auto* memory_map_tag = (stivale2_struct_tag_memmap*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+	auto* memory_map_tag  = (stivale2_struct_tag_memmap*)get_stivale2_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
 	if (memory_map_tag == nullptr) {
 		klog(LogLevel::Error, "Couldn't find the stivale2 memory map tag :'(");
@@ -67,12 +59,18 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 		for(;;);
 	}
 
-	u64 memory_map_entry_count = memory_map_tag->entries;
-	stivale2_mmap_entry* memmap_entries = memory_map_tag->memmap;
+	u64                  memory_map_entry_count = memory_map_tag->entries;
+	stivale2_mmap_entry* memmap_entries         = memory_map_tag->memmap;
+
 	Memory::BootloaderMemoryMapEntry memory_map_entries[memory_map_entry_count];
 
-	for(uint64_t i = 0; i < memory_map_entry_count; i++)
-		memory_map_entries[i] = memory_map_entry_from_stivale2_entry(memmap_entries[i]);
+	for(uint64_t i = 0; i < memory_map_entry_count; i++) {
+		memory_map_entries[i] = {
+			.address = memmap_entries[i].base,
+			.size    = memmap_entries[i].length,
+			.type    = memmap_entries[i].type
+		};
+	}
 
 	Memory::BootloaderMemoryMap memory_map = {
 		.entries = &memory_map_entries[0],

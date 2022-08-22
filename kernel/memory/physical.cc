@@ -1,7 +1,7 @@
 #include "physical.hh"
 
-#include <ax_util/bitmap.hh>
-#include <ax_util/list.hh>
+#include <libs/ax/bitmap.hh>
+#include <libs/ax/list.hh>
 #include <kernel/k_debug.hh>
 #include <kernel/panic.hh>
 #include <kernel/memory/region.hh>

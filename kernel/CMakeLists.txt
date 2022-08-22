@@ -4,11 +4,10 @@ set( KERNEL_SOURCES
 	arch/amd64/paging_utils.S
 	arch/amd64/processor.cc
 	arch/amd64/boot/boot_stivale.cc
-	arch/amd64/gdt/gdt.cc
-	arch/amd64/gdt/load_gdt.S
+	arch/amd64/boot/tables.cc
+	arch/amd64/boot/load_gdt.S
 	arch/amd64/interrupts/interrupts.cc
 	arch/amd64/interrupts/interrupts.S
-	arch/amd64/interrupts/IDT.cc
 	arch/amd64/interrupts/pic.cc
 	memory/bootloader_memory_map.cc
 	memory/memory_manager.cc

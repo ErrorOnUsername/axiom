@@ -1,7 +1,7 @@
 #pragma once
 #include <stdarg.h>
 
-#include <ax_util/types.hh>
+#include <libs/ax/types.hh>
 
 #define klogf(mode, msg, ...)                                                        \
 	Kernel::klog_impl(mode                                                           \

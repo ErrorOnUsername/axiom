@@ -16,7 +16,7 @@ void panic(char const* msg)
 	for(size_t i = 0; msg[i] != 0; i++)
 		EarlyConsole::put_char(msg[i]);
 
-	CPU::halt_all();
+	CPU::halt();
 }
 
 }

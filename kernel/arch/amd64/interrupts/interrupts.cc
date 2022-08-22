@@ -1,11 +1,13 @@
-#include <ax_util/helpers.hh>
-#include <ax_util/types.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/types.hh>
 #include <kernel/k_debug.hh>
-#include <kernel/arch/amd64/interrupts/idt.hh>
-#include <kernel/arch/pic.hh>
+#include <kernel/arch/amd64/boot/tables.hh>
 #include <kernel/arch/amd64/register_state.hh>
+#include <kernel/arch/pic.hh>
 
 namespace Kernel {
+
+using IRQHandlerProc = void (*)();
 
 static constexpr u8 IRQ_BASE = 32;
 static void* irq_handlers[16];
@@ -73,17 +75,20 @@ void common_interrupt_handler(RegisterState* registers)
 		for(;;); // should never be reached
 	}
 
-	void (*handler)() = (void (*)())irq_handlers[registers->interrupt_vector - IRQ_BASE];
+	int irq = registers->interrupt_vector - IRQ_BASE;
+
+	IRQHandlerProc handler = (IRQHandlerProc)irq_handlers[irq];
+
 	if(handler)
 		handler();
 	else
 		klogf(LogLevel::Warning, "The irq %d does not have a handler registered!", (u8)(registers->interrupt_vector - IRQ_BASE));
-	PIC::end_of_interrupt(registers->interrupt_vector - IRQ_BASE);
+	PIC::end_of_interrupt(irq);
 }
 
-void register_irq(u8 irq_number, void* handler)
+void register_irq(u8 irq_number, void (*handler)())
 {
-	irq_handlers[irq_number] = handler;
+	irq_handlers[irq_number] = (void*)handler;
 }
 
 }

@@ -1,7 +1,7 @@
 #include "memory_manager.hh"
 
-#include <ax_util/helpers.hh>
-#include <ax_util/result.hh>
+#include <libs/ax/helpers.hh>
+#include <libs/ax/result.hh>
 #include <kernel/arch/interrupts.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/memory.hh>
