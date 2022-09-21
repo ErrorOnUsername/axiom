@@ -4,7 +4,6 @@
 #include <libs/ax/queue.hh>
 #include <kernel/arch/processor.hh>
 #include <kernel/arch/interrupts.hh>
-#include <kernel/system/scheduler/thread.hh>
 #include <kernel/memory/paging.hh>
 #include <kernel/time/pit.hh>
 #include <kernel/k_debug.hh>
@@ -17,26 +16,36 @@ namespace Scheduler {
 
 static AX::Lock scheduler_lock;
 
-static AX::Queue<int> kernel_tasks;
-static AX::Queue<int> user_tasks;
+static AX::Queue<Thread*> kernel_tasks;
+static AX::Queue<Thread*> user_tasks;
 
-AX::Result init()
+void init()
 {
 	kernel_tasks.ensure_capacity(8);
 	user_tasks.ensure_capacity(16);
 
 	PIT::init(&on_task_switch_timer);
-
-	return AX::Result::Success;
 }
 
-void start(Thread* thread, uintptr_t ip, uintptr_t sp) { }
+void start(Thread* thread, uintptr_t ip, uintptr_t sp)
+{
+	AX::ScopeLocker locker(scheduler_lock);
+
+	ASSERT(!thread->started);
+
+	thread->context->init(ip, sp, 0);
+	thread->started = true;
+
+	enqueue_thread(thread);
+}
 
 void pick_next()
 {
 	Thread* current_thread = Processor::current_thread();
 	(void)current_thread;
 }
+
+void enqueue_thread(Thread*) { }
 
 }
 

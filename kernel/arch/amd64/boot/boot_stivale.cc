@@ -5,6 +5,7 @@
 
 #include <kernel/k_debug.hh>
 #include <kernel/arch/amd64/boot/stivale2.h>
+#include <kernel/arch/amd64/interrupts/pic.hh>
 
 namespace Kernel {
 
@@ -76,6 +77,10 @@ extern "C" void boot_entry(stivale2_struct* stivale2_struct)
 		.entries = &memory_map_entries[0],
 		.length = memory_map_entry_count
 	};
+
+	//
+	// Arch-specific init
+	//
 
 	k_init(memory_map, framebuffer_tag->framebuffer_addr, framebuffer_tag->framebuffer_width, framebuffer_tag->framebuffer_height);
 }

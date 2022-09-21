@@ -2,7 +2,7 @@
 
 #include <libs/ax/types.hh>
 
-#define REGISTER_STATE_SIZE (8 * 18)
+#define REGISTER_STATE_SIZE (8 * 20)
 
 struct RegisterState {
 	u64 rip;
@@ -24,6 +24,8 @@ struct RegisterState {
 	u64 r13;
 	u64 r14;
 	u64 r15;
+
+	u64 rflags;
 
 	u64 interrupt_vector;
 	u64 error_code;

@@ -1,8 +1,7 @@
 #include <libs/ax/result.hh>
 #include <libs/ax/types.hh>
 #include <kernel/k_debug.hh>
-#include <kernel/arch/rtc.hh>
-#include <kernel/arch/pic.hh>
+#include <kernel/arch/init.hh>
 #include <kernel/arch/processor.hh>
 #include <kernel/memory/bootloader_memory_map.hh>
 #include <kernel/memory/memory_manager.hh>
@@ -48,7 +47,7 @@ extern "C" void k_init(Memory::BootloaderMemoryMap& memory_map, addr_t framebuff
 
 	k_printf("[33;1mStarting up Axiom...[0m\n");
 
-	PIC::init();
+	Arch::init();
 	Scheduler::init();
 
 	k_printf("%s\n", banner);

@@ -1,4 +1,6 @@
 .macro push_all
+	pushfq
+
 	pushq %r15
 	pushq %r14
 	pushq %r13
@@ -40,6 +42,8 @@
 	popq %r13
 	popq %r14
 	popq %r15
+
+	popfq
 .endm
 
 .macro isr_err_stub vec

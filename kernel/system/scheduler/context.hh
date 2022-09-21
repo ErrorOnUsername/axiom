@@ -13,6 +13,8 @@ struct Context {
 
 	Memory::MemoryRange userspace_stack;
 	Memory::MemoryRange kernel_stack;
+
+	void init(uintptr_t ip, uintptr_t sp, uintptr_t ksp);
 };
 
 }

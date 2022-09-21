@@ -3,7 +3,7 @@
 #include <kernel/k_debug.hh>
 #include <kernel/arch/amd64/boot/tables.hh>
 #include <kernel/arch/amd64/register_state.hh>
-#include <kernel/arch/pic.hh>
+#include <kernel/arch/amd64/interrupts/pic.hh>
 
 namespace Kernel {
 

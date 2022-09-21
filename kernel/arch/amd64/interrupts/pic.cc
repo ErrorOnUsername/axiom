@@ -1,4 +1,4 @@
-#include <kernel/arch/pic.hh>
+#include "pic.hh"
 
 #include <kernel/io.hh>
 #include <kernel/k_debug.hh>

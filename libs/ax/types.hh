@@ -13,6 +13,7 @@ using i32 = __INT32_TYPE__;
 using i64 = __INT64_TYPE__;
 
 using size_t    = __SIZE_TYPE__;
+using usize     = __SIZE_TYPE__;
 using uintptr_t = __UINTPTR_TYPE__;
 using ptrdiff_t = __PTRDIFF_TYPE__;
 

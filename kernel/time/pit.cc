@@ -24,12 +24,13 @@ static constexpr u8 SQUARE_WAVE_MODE = 0x06;
 static constexpr u8 FULL_WORD_ACCESS_MODE = 0x30;
 
 static constexpr size_t BASE_FREQUENCY = 1193182;
-static constexpr size_t TICK_RATE      = 1000;
+static constexpr size_t TICK_RATE      = 250;
 
 void reset_to_default_frequency();
 
 void init(void (*handler)())
 {
+	ScopeInterruptDisabler disabler;
 	register_irq(TIMER_IRQ, handler);
 
 	IO::out8(PIT_CONTROL_PORT, TIMER0_SELECT | FULL_WORD_ACCESS_MODE | SQUARE_WAVE_MODE);

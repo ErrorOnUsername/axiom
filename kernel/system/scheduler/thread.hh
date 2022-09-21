@@ -9,9 +9,15 @@ namespace Kernel {
 struct Thread {
 	Process* owning_process;
 	Context* context;
-	u64      cpu;
-	int      tid;
-	int      pid;
+
+	u64 cpu;
+	int tid;
+	int pid;
+
+	bool in_syscall;
+	bool blocked;
+	bool stopped;
+	bool started;
 
 	Thread(Process*, AXCallback thread_proc);
 
