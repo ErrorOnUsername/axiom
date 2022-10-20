@@ -28,7 +28,7 @@ static constexpr size_t TICK_RATE      = 250;
 
 void reset_to_default_frequency();
 
-void init(void (*handler)())
+void init(IRQHandler handler)
 {
 	ScopeInterruptDisabler disabler;
 	register_irq(TIMER_IRQ, handler);

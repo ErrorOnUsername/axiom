@@ -5,16 +5,17 @@
 
 namespace Kernel {
 
+enum class ThreadPermissions;
+
 struct Context {
 	uintptr_t userspace_stack_ptr;
 	uintptr_t kernel_stack_ptr;
 
 	RegisterState registers;
 
-	Memory::MemoryRange userspace_stack;
-	Memory::MemoryRange kernel_stack;
+	Context();
 
-	void init(uintptr_t ip, uintptr_t sp, uintptr_t ksp);
+	void init(uintptr_t ip, uintptr_t sp, uintptr_t ksp, ABIArgs, ThreadPermissions);
 };
 
 }

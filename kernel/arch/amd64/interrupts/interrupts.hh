@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libs/ax/helpers.hh>
+#include <kernel/arch/amd64/register_state.hh>
 
 namespace Kernel {
 
@@ -12,6 +13,8 @@ struct ScopeInterruptDisabler {
 	~ScopeInterruptDisabler() { asm("sti;"); }
 };
 
-void register_irq(u8 irq_number, void (*handler)());
+using IRQHandler = void(*)(RegisterState&);
+
+void register_irq(u8 irq_number, IRQHandler);
 
 }

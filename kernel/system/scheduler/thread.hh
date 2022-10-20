@@ -1,10 +1,16 @@
 #pragma once
 
 #include <libs/ax/types.hh>
+#include <kernel/arch/register_state.hh>
 #include <kernel/system/scheduler/context.hh>
 #include <kernel/system/scheduler/proccess.hh>
 
 namespace Kernel {
+
+enum class ThreadPermissions {
+	KernelMode,
+	UserMode,
+};
 
 struct Thread {
 	Process* owning_process;
@@ -19,10 +25,16 @@ struct Thread {
 	bool stopped;
 	bool started;
 
-	Thread(Process*, AXCallback thread_proc);
+	ThreadPermissions permissions;
 
-	void save_context();
-	void load_context();
+	Memory::MemoryRange userspace_stack;
+	Memory::MemoryRange kernel_stack;
+
+	Thread(Process*, int tid, AXCallback thread_proc, ABIArgs, ThreadPermissions);
+	~Thread();
+
+	void save_context(RegisterState const&);
+	void load_context_to(RegisterState&);
 };
 
 };

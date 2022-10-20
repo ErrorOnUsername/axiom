@@ -16,6 +16,8 @@ struct Processor {
 
 	u8 cpu_id;
 
+	void set_current_thread();
+
 	static Thread* current_thread();
 	static Thread* current_idle_thread();
 

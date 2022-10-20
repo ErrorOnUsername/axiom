@@ -10,7 +10,7 @@
 
 namespace Kernel {
 
-static void on_task_switch_timer();
+static void on_task_switch_timer(RegisterState&);
 
 namespace Scheduler {
 
@@ -33,7 +33,7 @@ void start(Thread* thread, uintptr_t ip, uintptr_t sp)
 
 	ASSERT(!thread->started);
 
-	thread->context->init(ip, sp, 0);
+	thread->context->init(ip, sp, 0 /* ksp */, ABIArgs{}, thread->permissions);
 	thread->started = true;
 
 	enqueue_thread(thread);
@@ -49,17 +49,16 @@ void enqueue_thread(Thread*) { }
 
 }
 
-static void on_task_switch_timer()
+static void on_task_switch_timer(RegisterState& regs)
 {
-	// We don't want to get preempted while we're doing this.
 	ScopeInterruptDisabler disabler;
 
-	Processor::current_thread()->save_context();
+	Processor::current_thread()->save_context(regs);
 	Scheduler::pick_next();
 	Thread* new_thread = Processor::current_thread();
 	if(!new_thread)
 		return;
-	new_thread->load_context();
+	new_thread->load_context_to(regs);
 	Memory::switch_address_space(new_thread->owning_process->addr_space);
 }
 

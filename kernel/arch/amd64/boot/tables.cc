@@ -16,14 +16,6 @@ struct DescriptorTablePointer {
 // Global Descriptor Table //
 // ####################### //
 
-enum class GDTEntryOffset : u16 {
-	NullSegment          = 0x0000,
-	KernelCodeSegment    = 0x0008,
-	KernelDataSegment    = 0x0010,
-	UserspaceCodeSegment = 0x0018,
-	UserspaceDataSegment = 0x0020,
-};
-
 struct GDTEntry {
 	u16 limit_0;
 	u16 base_0;
@@ -96,8 +88,8 @@ static GDT custom_gdt = {
 	{0, 0, 0, 0x92, 0xa0, 0}, // DATA
 
 	// Userspace Segments
-	{0, 0, 0, 0xfa, 0xa0, 0}, // CODE
 	{0, 0, 0, 0xf2, 0xa0, 0}, // DATA
+	{0, 0, 0, 0xfa, 0xa0, 0}, // CODE
 };
 
 void init_descriptor_tables()
